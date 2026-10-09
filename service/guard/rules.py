@@ -39,8 +39,25 @@ RULES: tuple[str, ...] = (
     "bad_signature",      # BadSignature (signing.verify_request)
     "not_enough_cover",   # NotEnoughCover (ceiling: the maker's free cover)
     "needs_approval",     # NeedsApproval (above the agent's auto-pay limit)
+    "nonce_used",         # NonceUsed: this signed request was already spent (contract only)
+    "low_balance",        # InsufficientBalance: Ana's Checkpoint balance < charge (contract only)
 )
 BIT = {name: 1 << i for i, name in enumerate(RULES)}
+
+# The ledger's words for each rule ("Refused: amount, shop, address"); J1 item 1.
+WORDS = {
+    "over_request_max": "amount",
+    "over_per_item": "item cap",
+    "over_monthly": "monthly budget",
+    "shop_not_allowed": "shop",
+    "wrong_address": "address",
+    "expired": "expired",
+    "bad_signature": "signature",
+    "not_enough_cover": "cover",
+    "needs_approval": "needs your OK",
+    "nonce_used": "already used",
+    "low_balance": "balance",
+}
 
 ZERO_HASH = "0x" + "0" * 64
 USDC_UNITS_PER_CENT = 10_000  # 6-decimal USDC; 1 USD = 1 USDC = 100 cents

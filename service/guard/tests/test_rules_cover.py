@@ -64,3 +64,16 @@ def test_usdc_to_cents_rounds_up():
     assert usdc_to_cents(61_540_000) == 6_154
     assert usdc_to_cents(61_540_001) == 6_155
     assert usdc_to_cents(0) == 0
+
+
+def test_contract_only_bits_match_checkpoint_sol():
+    """Checkpoint.sol: NONCE_USED = 1 << 9, LOW_BALANCE = 1 << 10."""
+    assert RULES.index("nonce_used") == 9
+    assert RULES.index("low_balance") == 10
+    assert from_bitmask((1 << 9) | (1 << 10)) == ["nonce_used", "low_balance"]
+
+
+def test_every_rule_has_ledger_words():
+    from service.guard.rules import WORDS
+
+    assert set(WORDS) == set(RULES)

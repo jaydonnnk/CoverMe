@@ -1,8 +1,8 @@
 # Contracts
 
-Jaydon owns `src/`, `test/`, `script/` and Foundry configuration. The starter has
-only a toolchain smoke test; Checkpoint, Bond, Sender and deployment logic are not
-implemented. `forge-std` is a pinned Git submodule.
+Jaydon owns `src/`, `test/`, `script/` and Foundry configuration: `Checkpoint.sol`,
+`Bond.sol`, the `Sender` helper, their tests (including laeria's 19 cases) and the
+deploy scripts. `forge-std` is a pinned Git submodule.
 
 From this folder:
 

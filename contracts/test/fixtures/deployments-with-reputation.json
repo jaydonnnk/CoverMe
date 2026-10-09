@@ -1,0 +1,13 @@
+{
+  "chainId": 763373,
+  "registries": {
+    "Identity": { "address": "0x5fE095dA5C7Bd3E80E28e59F1e43D250D3e7B620", "abi": [] },
+    "Reputation": { "address": "0x891513a8C901916D57833201bC2720a63E349a60", "abi": [] },
+    "agentId": "7"
+  },
+  "cover": {
+    "Checkpoint": { "address": null, "abi": [] },
+    "Bond": { "address": "0x00000000000000000000000000000000000000b0", "abi": [] },
+    "USDC": { "address": null, "abi": [] }
+  }
+}
