@@ -108,7 +108,7 @@ def test_happy_path_emits_every_step_and_confirms_paid():
         ("confirmed", "ok"),
     ]
     assert all(e.request_id == RID for e in events)
-    assert events[0].purchase_id is None and all(e.purchase_id == 7 for e in events[1:])
+    assert events[0].purchase_id == 0 and all(e.purchase_id == 7 for e in events[1:])
     assert events[1].tx_hash == "0xrelease" and events[-1].tx_hash == "0xconfirm"
     assert events[-1].kwal_payment_id == "pay_de230427"
     assert "0.11 USDC" in events[2].detail
@@ -210,10 +210,16 @@ def test_one_payment_at_a_time():
     assert order == ["fund a", "confirm", "fund b", "confirm"]
 
 
-def test_no_chain_configured_raises():
+def test_no_chain_configured_raises(monkeypatch):
+    from service.payments import chain as chain_module
+
+    def missing():
+        raise chain_module.ChainConfigError("no deployments")
+
     flow.use_chain(None)
+    monkeypatch.setattr(chain_module, "default", missing)
     events, exc = run(None, FakeKwal())
-    assert events == [] and isinstance(exc, RuntimeError)
+    assert events == [] and isinstance(exc, chain_module.ChainConfigError)
 
 
 def test_event_shape_matches_3_5():

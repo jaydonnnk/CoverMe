@@ -2,7 +2,7 @@
 covered purchase against a `flow.Checkpoint` (web3.py in `chain.py`, J7).
 Importing this package never touches the network or the Kwal skill; the
 first Kwal call does."""
-from .flow import Event, NeedsApproval, PaymentFailed, Released, bought, pay, use_chain
+from .flow import Event, NeedsApproval, PaymentFailed, Released, bought, pay, pay_approved, use_chain
 from .kwal import (
     KwalError,
     Product,
@@ -22,6 +22,20 @@ from .kwal import (
     wait_for_payment,
 )
 
+
+
+def check(request: dict, signature: str, q: Quote) -> list[str]:
+    """3.1: `Checkpoint.check()` for this quote; every failed rule by name
+    ([] = release will pass). `["needs_approval"]` alone means A5, not a refusal."""
+    from service.guard.rules import from_bitmask
+
+    from . import flow
+    from .chain import default
+
+    chain = flow._chain or default()
+    return from_bitmask(chain.check(request, signature, bought(q)))
+
+
 __all__ = [
     "Event",
     "KwalError",
@@ -33,10 +47,12 @@ __all__ = [
     "Released",
     "ShipTo",
     "bought",
+    "check",
     "checkout",
     "funding",
     "options",
     "pay",
+    "pay_approved",
     "payment",
     "quote",
     "read_quote",

@@ -178,3 +178,73 @@ def request_digest(request: dict, *, verifying_contract: str | None = None) -> s
 
     msg = signable(request, verifying_contract or checkpoint_address())
     return "0x" + keccak(b"\x19" + msg.version + msg.header + msg.body).hex()
+
+
+# ------------------------------------------------------------------ A5 approval
+
+# Same domain as the request. Matches Checkpoint.APPROVAL_TYPEHASH; read from
+# shared/purchase-request.json once J1 adds it there, this is the fallback.
+APPROVAL_FIELDS = [
+    {"name": "requestDigest", "type": "bytes32"},
+    {"name": "chargeUsdc", "type": "uint256"},
+    {"name": "deadline", "type": "uint256"},
+]
+
+
+def approval_fields() -> list[dict]:
+    return schema().get("types", {}).get("Approval") or APPROVAL_FIELDS
+
+
+def approval_message(approval: dict) -> dict:
+    if not isinstance(approval, dict):
+        raise BadSignature("approval is not an object")
+    names = [f["name"] for f in approval_fields()]
+    if sorted(approval) != sorted(names):
+        raise BadSignature(f"approval must have exactly: {', '.join(names)}")
+    return {f["name"]: _coerce(f["name"], f["type"], approval[f["name"]]) for f in approval_fields()}
+
+
+def approval_signable(approval: dict, verifying_contract: str):
+    from eth_account.messages import encode_typed_data
+
+    return encode_typed_data(_domain(verifying_contract), {"Approval": approval_fields()}, approval_message(approval))
+
+
+def make_approval(request: dict, charge_usdc: int, deadline: int, *, verifying_contract: str | None = None) -> dict:
+    """The Approval Ana signs for one uncovered purchase (A5): it names this
+    request's digest, so it dies with the request's nonce."""
+    return {
+        "requestDigest": request_digest(request, verifying_contract=verifying_contract),
+        "chargeUsdc": int(charge_usdc),
+        "deadline": int(deadline),
+    }
+
+
+def sign_approval(approval: dict, private_key: str, *, verifying_contract: str | None = None) -> str:
+    from eth_account import Account
+
+    signed = Account.sign_message(
+        approval_signable(approval, verifying_contract or checkpoint_address()), private_key=private_key
+    )
+    return "0x" + signed.signature.hex().removeprefix("0x")
+
+
+def verify_approval(
+    approval: dict, signature: str, request: dict, *, verifying_contract: str | None = None
+) -> str:
+    """Recover the approval's signer; it must be the request's shopper and name
+    this request. Raises BadSignature otherwise. (Charge and deadline are the
+    contract's to check against the quote and the block.)"""
+    from eth_account import Account
+
+    contract = verifying_contract or checkpoint_address()
+    msg = approval_message(approval)
+    if "0x" + msg["requestDigest"].hex() != request_digest(request, verifying_contract=contract).lower():
+        raise BadSignature("the approval is for a different request")
+    try:
+        signer = Account.recover_message(approval_signable(approval, contract), signature=signature)
+    except Exception as exc:  # noqa: BLE001
+        raise BadSignature(f"could not recover a signer from the approval: {exc}") from exc
+    if signer.lower() != str(request["shopper"]).lower():
+        raise BadSignature(f"the approval was not signed by the shopper ({signer})")
+    return signer
