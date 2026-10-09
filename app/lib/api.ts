@@ -1,4 +1,4 @@
-import type { ChatResponse, Limits, MakerMetrics, Purchase, RequestDraft, ServiceConfig } from "./types";
+import type { AgentListing, ChatResponse, Limits, MakerMetrics, Purchase, RequestDraft, ServiceConfig } from "./types";
 
 export const serviceUrl = (process.env.NEXT_PUBLIC_SERVICE_URL || "http://localhost:8000").replace(/\/$/, "");
 
@@ -19,11 +19,14 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
 }
 
 export const getConfig = () => request<ServiceConfig>("/config");
-export const sendChat = (message: string) => request<ChatResponse>("/chat", { message });
-export const submitRequest = (draft: RequestDraft, signature: string) => request<{ purchase_id: number }>("/requests", { request: draft, signature });
+export const getAgents = () => request<AgentListing[]>("/agents");
+export const sendChat = (message: string, agentListingId: string) => request<ChatResponse>("/chat", { message, agent_listing_id: agentListingId });
+export const submitRequest = (draft: RequestDraft, signature: string, quoteId: string) => request<{ purchase_id: number }>("/requests", { request: draft, signature, quote_id: quoteId });
 export const getPurchase = (id: number) => request<Purchase>(`/purchases/${id}`);
 // These helpers intentionally cannot be used as a live wallet replacement.
 export const setDemoLimits = (limits: Limits) => request("/demo/limits", limits);
-export const getDemoMaker = () => request<MakerMetrics>("/demo/maker");
+export const getDemoMaker = (agentListingId: string) => request<MakerMetrics>(`/demo/maker?agent_listing_id=${encodeURIComponent(agentListingId)}`);
+export const setDemoProviderFee = (agentListingId: string, feeType: "flat" | "percentage", feeValue: number) => request<MakerMetrics>(`/demo/providers/${encodeURIComponent(agentListingId)}`, { fee_type: feeType, fee_value: feeValue });
+export const setFailureMode = (enabled: boolean) => request<{ enabled: boolean }>("/demo/failure-mode", { enabled });
 export const claimDemo = (id: number) => request(`/demo/claims/${id}`, {});
 export const resetDemo = () => request("/demo/reset", {});

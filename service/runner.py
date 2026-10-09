@@ -53,28 +53,44 @@ class Adapter:
     def limits(self, shopper):
         return self.demo.limits if self.simulation else self.chain.get_limits(shopper)
 
-    def free_cover(self, agent_id):
-        return self.demo.metrics()["free_cover"] if self.simulation else self.chain.get_free_cover(agent_id)
+    def free_cover(self, agent_id, listing_id=None):
+        return self.demo.metrics(listing_id or "atlas")["free_cover"] if self.simulation else self.chain.get_free_cover(agent_id)
 
 
 async def run_purchase(purchase_id: int, signed: SignedPurchaseRequest, store: Store, adapter: Adapter):
     purchase = store.get_purchase(purchase_id)
     request = signed.request.model_dump()
     try:
+        snapshot = store.get_quote(signed.quote_id)
+        if adapter.simulation:
+            if snapshot is None:
+                raise ValueError("Missing or expired pricing snapshot")
+            if snapshot.agent_listing_id != purchase.agent_listing_id:
+                raise ValueError("Selected agent does not match the approved quote")
+            if snapshot.item != request["item"] or snapshot.shop != request["shop"]:
+                raise ValueError("Purchase request does not match the approved quote")
         await asyncio.to_thread(adapter.verify, request, signed.signature)
         row = find_item(request["item"])
         if row is None:
             raise ValueError("No demo catalogue product matches this request")
         q = await asyncio.to_thread(adapter.payments.quote, row["variant_id"], 1, adapter.shipping())
+        if snapshot and (snapshot.item_subtotal_cents != q.listed_usd_cents or snapshot.shop != q.shop):
+            raise ValueError("Catalogue price or merchant changed after approval")
         limits = await asyncio.to_thread(adapter.limits, request["shopper"])
-        free_cover = await asyncio.to_thread(adapter.free_cover, request["agentId"])
+        free_cover = await asyncio.to_thread(adapter.free_cover, request["agentId"], purchase.agent_listing_id)
         failures = guard.check_rules(request, q, limits)
         ceiling = guard.spend_ceiling_cents(request, q, limits, free_cover)
-        if q.charge_usdc > free_cover and "not_enough_cover" not in failures:
+        refundable = purchase.refundable_usdc or q.charge_usdc
+        fee_bps = adapter.demo.metrics(purchase.agent_listing_id or "atlas")["fee_bps"] if adapter.simulation else 0
+        cover_fee = q.charge_usdc * fee_bps // 10000
+        if refundable + cover_fee > free_cover and "not_enough_cover" not in failures:
             failures.append("not_enough_cover")
         if not failures and guard.purchase_cents(q) > ceiling:
             failures.append("not_enough_cover")
         failures += await asyncio.to_thread(adapter.payments.check, request, signed.signature, q)
+        mismatch = any(request[field] and request[field] != getattr(q, field) for field in ("colour", "size", "model"))
+        if mismatch and not purchase.failure_injected:
+            failures.append("variant_mismatch")
         if adapter.simulation and q.shop == "gmktec.com":
             # The presentation beat groups all amount caps into one stable amount
             # reason and deliberately demonstrates exactly amount/shop/address.
@@ -101,12 +117,13 @@ async def run_purchase(purchase_id: int, signed: SignedPurchaseRequest, store: S
             if event.kwal_payment_id:
                 purchase.kwal_payment_id = event.kwal_payment_id
             if adapter.simulation and event.step == "released":
-                fee = q.charge_usdc * adapter.demo.metrics()["fee_bps"] // 10000
-                adapter.demo.deposit -= fee
-                adapter.demo.fees_paid += fee
-                adapter.demo.reserved += q.charge_usdc
+                agent = adapter.demo.listing(purchase.agent_listing_id or "atlas")
+                agent["deposit"] -= cover_fee
+                agent["fees_paid"] += cover_fee
+                agent["reserved"] += refundable
             if adapter.simulation and event.step == "confirmed":
                 adapter.demo.limits.spent_this_month_cents += q.listed_usd_cents
+                adapter.demo.listing(purchase.agent_listing_id or "atlas")["service_earnings"] += purchase.service_fee_cents * 10000
             store.append_event(event)
     except Exception as exc:
         purchase.status = "error"
