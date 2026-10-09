@@ -1,0 +1,5 @@
+{
+  "name": "Cover demo shopping agent",
+  "description": "An agent backed by Cover",
+  "network": "Ink Sepolia"
+}
