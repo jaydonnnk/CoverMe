@@ -1,0 +1,583 @@
+<title>Cover Buildathon Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wghtA600;800&family=Atkinson+Hyperlegible:ital,wghtA0,400;0,700;1,400&family=IBM+Plex+Mono:wghtA400;500&display=swap">
+<style>
+/* Layout: one readable column. The decision card is a claim ticket with a perforated stub; evidence status shows as small chips; must-ship versus optional work is colour-coded. */
+:root {
+  --paper: #F3F5F2;
+  --sheet: #FFFFFF;
+  --ink: #17211B;
+  --ink-2: #4F5D55;
+  --rule: #D6DED8;
+  --accent: #1E5B3E;
+  --accent-soft: #E1EEE6;
+  --info: #22577A;
+  --info-soft: #E2ECF3;
+  --warn: #8A5300;
+  --warn-soft: #F8EDD8;
+  --bad: #A8261B;
+  --bad-soft: #F9E5E2;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+Amedia (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0F1411; --sheet: #161D19; --ink: #E2E9E4; --ink-2: #9BAAA1; --rule: #28332C;
+    --accent: #7FD0A3; --accent-soft: #163024; --info: #8CC3E6; --info-soft: #15283A;
+    --warn: #EDB662; --warn-soft: #33270F; --bad: #F08A7E; --bad-soft: #3A1A17;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0F1411; --sheet: #161D19; --ink: #E2E9E4; --ink-2: #9BAAA1; --rule: #28332C;
+  --accent: #7FD0A3; --accent-soft: #163024; --info: #8CC3E6; --info-soft: #15283A;
+  --warn: #EDB662; --warn-soft: #33270F; --bad: #F08A7E; --bad-soft: #3A1A17;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.6; padding-inline: 16px; padding-block: 0 4rem; }
+.wrap { max-width: 54rem; margin: 0 auto; display: grid; gap: 2.75rem; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.8rem, 8vw, 4.2rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+h3 { font-size: 1.12rem; font-weight: 600; }
+p { margin: 0; max-width: 66ch; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+code, .mono { font-family: var(--font-mono); font-size: 0.85em; }
+code { background: var(--accent-soft); padding: 0.05em 0.35em; border-radius: 3px; overflow-wrap: anywhere; }
+ul, ol { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.45rem; max-width: 66ch; }
+li::marker { color: var(--ink-2); }
+.eyebrow { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); font-weight: 700; }
+section { display: grid; gap: 1rem; min-width: 0; }
+section > header { display: grid; gap: 0.35rem; border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+.muted { color: var(--ink-2); }
+.small { font-size: 0.92rem; }
+.mast { display: grid; gap: 0.8rem; padding-top: 2.5rem; }
+.tagline { font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; color: var(--accent); }
+
+/* claim-ticket decision card */
+.ticket { display: grid; grid-template-columns: 1fr auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.ticket .main { padding: 1.4rem 1.5rem 1.5rem; display: grid; gap: 0.9rem; min-width: 0; }
+.ticket .stub { width: 7.5rem; border-left: 2px dashed var(--rule); background: var(--accent-soft); display: grid; align-content: center; justify-items: center; gap: 0.2rem; padding: 1rem 0.5rem; text-align: center; }
+.stub .big { font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+.stub .lbl { font-size: 0.78rem; color: var(--ink-2); }
+Amedia (max-width: 560px) { .ticket { grid-template-columns: 1fr; } .ticket .stub { width: auto; border-left: 0; border-top: 2px dashed var(--rule); grid-auto-flow: column; justify-content: center; gap: 0.6rem; } }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.45rem 1rem; }
+.kv dt { font-weight: 700; color: var(--ink-2); font-size: 0.95rem; }
+.kv dd { margin: 0; min-width: 0; }
+Amedia (max-width: 560px) { .kv { grid-template-columns: 1fr; } .kv dd { margin-bottom: 0.4rem; } }
+
+.todo { background: var(--warn-soft); border-radius: 8px; padding: 1.2rem 1.3rem; display: grid; gap: 0.7rem; }
+.todo h2 { font-size: 1.15rem; color: var(--warn); }
+nav.toc { display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; font-size: 0.88rem; }
+nav.toc a { text-decoration: none; padding: 0.2rem 0.6rem; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); color: var(--ink); }
+nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+.tag { display: inline-block; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500; padding: 0.05rem 0.4rem; border-radius: 3px; vertical-align: 0.12em; white-space: nowrap; }
+.tag.v { background: var(--accent-soft); color: var(--accent); }
+.tag.s { background: var(--info-soft); color: var(--info); }
+.tag.a { background: var(--warn-soft); color: var(--warn); }
+.legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: 0.88rem; color: var(--ink-2); }
+.pill { display: inline-block; font-size: 0.76rem; font-weight: 700; padding: 0.1rem 0.55rem; border-radius: 999px; white-space: nowrap; }
+.pill.must { background: var(--accent); color: var(--sheet); }
+.pill.opt { background: var(--info-soft); color: var(--info); }
+.pill.no { background: var(--bad-soft); color: var(--bad); }
+.pill.ok { background: var(--accent-soft); color: var(--accent); }
+
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); }
+table { border-collapse: collapse; width: 100%; font-size: 0.93rem; line-height: 1.45; }
+th, td { text-align: left; vertical-align: top; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--rule); }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--font-display); font-weight: 600; font-size: 0.84rem; color: var(--ink-2); background: var(--paper); white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tbl.wide table { min-width: 46rem; }
+.tbl.mid table { min-width: 36rem; }
+
+.callout { border-left: 3px solid var(--accent); background: var(--sheet); padding: 0.9rem 1.1rem; border-radius: 0; display: grid; gap: 0.5rem; }
+.callout.warn { border-left-color: var(--warn); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+.box { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem 1.15rem; display: grid; gap: 0.55rem; align-content: start; min-width: 0; }
+.box h3 { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; }
+.spec { display: grid; gap: 1rem; }
+.spec .box { border-top: 3px solid var(--accent); border-radius: 0 0 8px 8px; }
+.spec .box.opt { border-top-color: var(--info); }
+.done { font-size: 0.92rem; color: var(--ink-2); }
+.done strong { color: var(--ink); }
+
+.timeline { display: grid; gap: 0; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); overflow: hidden; }
+.tl { display: grid; grid-template-columns: 5.2rem 1fr 1fr; border-bottom: 1px solid var(--rule); }
+.tl:last-child { border-bottom: 0; }
+.tl > div { padding: 0.6rem 0.75rem; min-width: 0; font-size: 0.93rem; }
+.tl .t { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; background: var(--paper); font-variant-numeric: tabular-nums; }
+.tl.head > div { font-family: var(--font-display); font-weight: 600; font-size: 0.84rem; color: var(--ink-2); background: var(--paper); }
+.tl.mile > div { background: var(--accent-soft); }
+.tl.mile .t { color: var(--accent); }
+Amedia (max-width: 640px) { .tl { grid-template-columns: 1fr; } .tl .t { padding-bottom: 0.2rem; } .tl.head { display: none; } .tl > div:nth-child(2)::before { content: "You · "; font-weight: 700; color: var(--ink-2); } .tl > div:nth-child(3)::before { content: "Teammate · "; font-weight: 700; color: var(--ink-2); } .tl.mile > div:nth-child(n)::before { content: none; } }
+
+.beats { display: grid; gap: 0.6rem; }
+.beat { display: grid; grid-template-columns: 7rem 1fr; gap: 0.9rem; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 0.8rem 1rem; }
+.beat .t { font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.beat.key { border: 2px solid var(--accent); }
+.beat > div { min-width: 0; display: grid; gap: 0.3rem; }
+Amedia (max-width: 560px) { .beat { grid-template-columns: 1fr; gap: 0.3rem; } }
+.score { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+pre.mermaid { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 0; }
+footer { border-top: 1px solid var(--rule); padding-top: 1.2rem; font-size: 0.88rem; color: var(--ink-2); display: grid; gap: 0.5rem; }
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <span class="eyebrow">Reap × 65labs Agentic Buildathon · Fri 9 Oct 2026 · team brief for 2 people</span>
+  <h1>Cover</h1>
+  <p class="tagline">Limits stop the money. The bond fixes the mistakes.</p>
+  <p>When an AI agent buys the wrong thing, someone should pay for it, and it shouldn't be the shopper. Cover is a money-back guarantee for agent purchases. The company that makes the agent puts up a USDC deposit. The shopper's signed request is saved onchain before any money moves. If the agent gets it wrong, the shopper is refunded from that deposit in seconds.</p>
+</header>
+
+<div class="ticket" aria-label="The decision">
+  <div class="main">
+    <h2>The decision</h2>
+    <dl class="kv">
+      <dt>Build</dt><dd>Cover: an open, onchain money-back guarantee for agent purchases, with the claim rules written into the contract and the maker's deposit visible to anyone.</dd>
+      <dt>Route</dt><dd>Kwal (Payward's non-custodial wallet with Reap's Agentic module) carries the whole main product. Reap's direct API is an optional add-on after the 4:30 pm key.</dd>
+      <dt>Tracks</dt><dd>Primary: Best Use of Latest Technology. Secondary: Most Worthwhile Problem.</dd>
+      <dt>Themes</dt><dd>Stablecoin money and agent economy (main). Everyday life. Commerce in chat and apps (through the MCP add-on).</dd>
+      <dt>Demo moment</dt><dd>Ana asks for the black charger. Her agent buys the White/Dune one. She taps "Wrong item". About 10 seconds later, the money is back in her wallet from the agent maker's deposit, and the agent's record updates live.</dd>
+      <dt>Pitch line</dt><dd>"Ant's AgentSafePay, with the terms written in code and the deposit visible to anyone."</dd>
+    </dl>
+  </div>
+  <div class="stub" aria-hidden="true">
+    <span class="big">2</span><span class="lbl">people</span>
+    <span class="big">9:00</span><span class="lbl">pm hard close</span>
+  </div>
+</div>
+
+<div class="todo">
+  <h2>Your jobs before 3:00 pm</h2>
+  <ol>
+    <li><strong>Finish Kwal setup</strong> with a fresh wallet that will play Ana. Her wallet owns the vault. Keep the credentials file outside every git folder.</li>
+    <li><strong>Run the handover tests</strong> and note the answers. The four that matter most: did the throwaway purchase complete with no approval link (test 1)? Does a transfer from a second wallet count as vault funding, and how many seconds does it take (test 4)? Do quote IDs start with <code>sandbox_quote_</code>, meaning 1-USDC pricing (test 5)? Can one quote hold several items (test 6)?</li>
+    <li><strong>Check the demo item has two colours.</strong> Look up the Twelve South PowerBug 25W through Kwal's product lookup and confirm there's a black option next to White/Dune. If not, use a backup from <a href="#items">Demo items</a>.</li>
+    <li><strong>Collect test funds for four wallets</strong>: Ana, the agent maker, the Cover service (the operator that pays gas), and a spare. Get Ink Sepolia test ETH from inkonchain.com/faucet and test USDC from faucet.circle.com. Faucets limit how much you get each time <span class="tag a">assumption</span>, so start now and collect as much USDC as you can on Ana's and the maker's wallets.</li>
+    <li><strong>Make a Jev account</strong> (TypeSafe AI, or through OpenRouter) and add a few dollars of credit. It powers add-on A3, the judge for vague claims. Organiser credits only cover OpenAI, and nobody else can create the account for you.</li>
+    <li><strong>Send this page to your teammate</strong> and agree who takes which role (see <a href="#plan">Build plan</a>).</li>
+  </ol>
+</div>
+
+<nav class="toc" aria-label="Sections">
+  <a href="#problem">Problem</a><a href="#how">How it works</a><a href="#brief">Brief check</a><a href="#sponsor">Sponsor tools</a><a href="#laeria">laeria reuse</a><a href="#main">Main product</a><a href="#addons">Add-ons</a><a href="#items">Demo items</a><a href="#beats">Demo beats</a><a href="#api">API calls</a><a href="#plan">Build plan</a><a href="#risks">Risks</a><a href="#steer">Steer-clear</a><a href="#compete">Competition</a><a href="#rating">Rating</a><a href="#submit">Video and README</a><a href="#kickoff">Kickoff</a><a href="#change">Change my mind</a>
+</nav>
+
+<div class="legend">
+  <span><span class="tag v">verified</span> read in docs, code or the event pages on 9 Oct</span>
+  <span><span class="tag s">reported</span> news or search results only</span>
+  <span><span class="tag a">assumption</span> not tested yet</span>
+  <span><span class="pill must">must ship</span> main product</span>
+  <span><span class="pill opt">optional</span> add-on once main is done</span>
+</div>
+
+<section id="problem">
+  <header><span class="eyebrow">The problem</span><h2>Agents make mistakes, and right now the shopper pays</h2></header>
+  <ul>
+    <li><strong>Shops are making shoppers carry the risk.</strong> Target changed its terms on 22 Mar 2026: purchases by an AI agent are "considered transactions authorized by you", even if the outcome isn't what you meant. A Reddit thread called it "Target puts customers on the hook". <span class="tag s">reported</span></li>
+    <li><strong>Merchants want the agent's maker to pay.</strong> In a PYMNTS survey from Sep 2026, 93% of merchants said the agent provider should carry the loss for wrong purchases, and only 28% let agents buy their full range. <span class="tag s">reported</span></li>
+    <li><strong>The big players are moving, but only inside their own systems.</strong> Amex covers wrong items, but only for its cardholders and agents registered with Amex (14 Apr). Ant International promises full money back on its own payment network (18 Sep), but hasn't published its limits, exclusions or how fast it pays. <span class="tag s">reported</span></li>
+    <li><strong>Singapore's regulator wants a check before every agent action.</strong> MAS's SAFR paper (3 Jul 2026) describes a checkpoint that verifies and logs an agent's action before it happens. <span class="tag s">reported</span></li>
+  </ul>
+  <div class="callout">
+    <p><strong>Example.</strong> Ana says "Buy the black 25W PowerBug, under $60." The shop's page shows White/Dune as the default colour, and her agent takes the default. Today Ana is stuck with a $49.99 charger she didn't ask for. With Cover, she taps "Wrong item" and gets the money back from the agent maker's deposit.</p>
+  </div>
+  <div class="grid2">
+    <div class="box"><h3>Who it's for</h3><p>Companies that build shopping agents and want an Amex-style guarantee without being Amex. The shoppers who use those agents. Merchants who only want covered agents buying from them.</p></div>
+    <div class="box"><h3>Why they'd pay</h3><p>An agent maker gets a guarantee it can advertise, priced from its own onchain record. A good record means a smaller deposit and lower fees. Shoppers get money back in seconds, not weeks. <span class="tag a">assumption</span></p></div>
+  </div>
+</section>
+
+<section id="how">
+  <header><span class="eyebrow">How it works</span><h2>The agent asks, the contract checks, the deposit pays back</h2></header>
+<pre class="mermaid">
+flowchart LR
+  A["Ana sets limits and signs a request"] --> S["Cover service"]
+  G["Ana's AI agent"] -- "picks an item" --> S
+  S -- "quote" --> K["Kwal"]
+  S -- "release exact amount" --> C["Checkpoint contract (Ink)"]
+  C -- "USDC" --> V["Ana's Kwal vault"]
+  V --> R["Reap card pays the shop (simulated)"]
+  M["Agent maker"] -- "deposit" --> B["Bond contract (Ink)"]
+  C -. "purchase record" .-> B
+  B -- "refund on a valid claim" --> W["Ana's wallet"]
+</pre>
+  <ol>
+    <li><strong>The maker's deposit.</strong> The agent's maker locks test USDC in the Bond contract. An agent can only make covered purchases up to the part of its deposit that isn't already backing other purchases.</li>
+    <li><strong>Ana's limits.</strong> Ana keeps her own USDC in the Checkpoint contract and can withdraw it any time. She sets her limits once: $150 a month, $100 per item, these shops, her address, ends 31 Oct. This is "how a person gives permission and sets a budget".</li>
+    <li><strong>Ana's request.</strong> For each purchase, Ana's wallet signs what she wants: the item, its colour or size, the most she'll pay, the shop, and her address. The fields follow Mastercard's Verifiable Intent format.</li>
+    <li><strong>The checkpoint.</strong> The agent picks an item, and our service gets a Kwal quote. The contract checks Ana's signature, the amount, her monthly total, the shop, the address, and that the maker's deposit can cover it. Only then does it send the exact amount to Ana's Kwal vault. It records the request, the quote ID and what was actually bought.</li>
+    <li><strong>The purchase.</strong> Kwal sees the vault balance and its Reap card pays the shop. Our service writes the payment ID onchain.</li>
+    <li><strong>The claim.</strong> Ana taps "Wrong item". For clear-cut fields like colour, size or model, the contract compares what she signed with what was bought. If they differ, it refunds her from the maker's deposit straight away. No person or AI decides, because the contract is the judge. For vague complaints, add-on A3 asks Jev, a decision model, and records its answer onchain next to the refund or rejection.</li>
+  </ol>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Rule</th><th>Who enforces it</th><th>What happens if it fails</th></tr></thead>
+    <tbody>
+      <tr><td>Ana's signature, amount, monthly total, shop, address, end date</td><td>Checkpoint contract, before any money moves</td><td>Refused. No money leaves Ana's account.</td></tr>
+      <tr><td>Enough of the maker's deposit free to cover this purchase</td><td>Bond contract, at the checkpoint</td><td>Refused. An agent can't spend beyond its guarantee.</td></tr>
+      <tr><td>The item matches what Ana asked for</td><td>The agent's maker, backed by its deposit</td><td>Bought. Ana claims and the deposit refunds her.</td></tr>
+      <tr><td>Anything at all</td><td>The AI agent</td><td>Nothing. The agent holds no keys and no card details.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">Why not block a wrong item before paying? Requests are usually words ("black"), and shops label colours differently ("Midnight", "Dune"). Blocking on near-matches would refuse good purchases, and Cover would become the shopping agent. The maker decides which item matches; its deposit makes it careful. Clear-cut mismatches are refunded automatically by the contract. Vague ones ("it can't run two monitors") go to the optional Jev judge (add-on A3), which only refunds when it is very sure and sends everything else to the maker for review.</p>
+</section>
+
+<section id="brief">
+  <header><span class="eyebrow">Final check</span><h2>Cover against the organisers' "What to build" brief</h2></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>The brief says</th><th>Cover</th><th>Fit</th></tr></thead>
+    <tbody>
+      <tr><td>"Make a useful experience with agentic payments at its core."</td><td>Every step of the main loop is an agent payment: request, checkpoint, Kwal card spend, refund. Take the payment away and nothing is left.</td><td><span class="pill ok">yes</span></td></tr>
+      <tr><td>Theme: Stablecoin money and agent economy. "Explore programmable money and agents paying for work."</td><td>The maker's deposit and the refund are programmable money: the contract pays out on its own rules. The agent's spending power equals what its maker has staked on its work.</td><td><span class="pill ok">main theme</span></td></tr>
+      <tr><td>Theme: Everyday life. "Make a recurring or personal purchase easier."</td><td>Ana's personal purchases become safe to hand to an agent, because a mistake costs her nothing.</td><td><span class="pill ok">yes</span></td></tr>
+      <tr><td>Theme: Commerce in chat and apps. "Bring buying into a chat, community or app."</td><td>Ana buys by chatting with her agent. With add-on A4, Claude or ChatGPT can make covered purchases through MCP.</td><td><span class="pill ok">with A4</span></td></tr>
+      <tr><td>Theme: Business spend. "Help a team purchase or pay within a budget."</td><td>Not our story. Ana's monthly budget exists, but it isn't the pitch.</td><td><span class="pill no">not claimed</span></td></tr>
+      <tr><td>"Use the Agentic module for product discovery, pricing and checkout."</td><td>Search, product lookup, variant, quote and checkout all go through Kwal's routes to Reap's catalogue.</td><td><span class="pill ok">yes</span></td></tr>
+      <tr><td>"You build the agent's logic and the experience around it, including how a person gives permission and sets a budget."</td><td>We build the agent (two tools), Ana's limits screen (monthly budget, per-item maximum, shops, address, end date) and her signed request for each purchase.</td><td><span class="pill ok">yes, explicitly</span></td></tr>
+      <tr><td>"Or use Payward / Kwal: a user-owned crypto wallet and a funded vault…"</td><td>Ana's own wallet owns the Kwal vault. The Checkpoint funds it just in time for each purchase.</td><td><span class="pill ok">yes</span></td></tr>
+      <tr><td>"Every project must use Reap's Agentic module, Payward's non-custodial wallet with Agentic, or both."</td><td>Payward's non-custodial wallet with Agentic (Kwal) in the main product, plus Reap's direct API as add-on A5.</td><td><span class="pill ok">passes</span></td></tr>
+      <tr><td>"Checkout is simulated… Use test assets for Kwal funding."</td><td>Sandbox card spend only, nothing ships. Test USDC on Ink Sepolia. The README says so first.</td><td><span class="pill ok">passes</span></td></tr>
+      <tr><td>"Don't bypass Agentic by scraping checkout or handing raw card details to an AI model."</td><td>No scraping and no browser checkout. The agent never sees a card. Kwal has no card details to hand over.</td><td><span class="pill ok">passes</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="sponsor">
+  <header><span class="eyebrow">Sponsor tools</span><h2>What each organiser tool does in Cover</h2></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Tool</th><th>Job in Cover</th><th>Load-bearing?</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Kwal</strong> (Payward's non-custodial wallet with a Reap card) <span class="tag v">verified</span></td><td>The payer. The Checkpoint sends the exact quote amount into Ana's vault and Kwal pays. The quote and payment IDs are recorded onchain next to Ana's request.</td><td><span class="pill must">yes</span> Without it, nothing ties the money to the request at the moment of payment.</td></tr>
+      <tr><td><strong>Reap catalogue through Kwal</strong> <span class="tag v">verified</span></td><td>Real shops with real colour and size options. The quote names the exact variant, which is what the claim compares.</td><td><span class="pill must">yes</span> The mismatch must come from a real quote.</td></tr>
+      <tr><td><strong>Ink Sepolia</strong> (Kraken's test network, chain ID 763373) <span class="tag v">verified</span></td><td>Runs our Checkpoint and Bond contracts. It's the same network as the Kwal vault, so each release is one token transfer.</td><td><span class="pill must">yes</span></td></tr>
+      <tr><td><strong>Reap's planned mandate fields</strong> (not live) <span class="tag v">verified</span></td><td>Ana's limits use Reap's planned names: amount, frequency, max charges, merchant scope. We add a monthly total, an end date and an address check.</td><td>No, but cheap. Reap's judges see their own roadmap running.</td></tr>
+      <tr><td><strong>Reap Agentic API direct</strong> (team key after 4:30 pm)</td><td>Add-on A5: purchases over Ana's per-item limit go to Reap's hosted approval page. She approves on her own card, outside cover.</td><td><span class="pill opt">optional</span></td></tr>
+      <tr><td><strong>MCP</strong> (sandbox-only, per Reap's FAQ) <span class="tag v">verified</span></td><td>Add-on A4: a Cover MCP server, so Claude or ChatGPT can make covered purchases. That proves any agent maker can plug in.</td><td><span class="pill opt">optional</span> The strongest Latest Tech moment.</td></tr>
+      <tr><td><strong>Payward Services</strong> (only if teams get credentials)</td><td>Add-on A7: the maker's idle deposit earns yield, so staking costs less.</td><td><span class="pill opt">optional</span></td></tr>
+      <tr><td><strong>OpenAI credits</strong> (from the organisers)</td><td>The demo shopping agent.</td><td>The agent is needed. The model choice isn't important.</td></tr>
+      <tr><td><strong>Jev</strong> by TypeSafe AI (launched 15 Sep 2026; not organiser tech) <span class="tag s">reported</span></td><td>Add-on A3: the judge for vague claims. It reads Ana's request, Kwal's product description and her complaint, and returns probabilities for match, mismatch or needs review. A3b: checks product text for hidden instructions before the agent acts on it.</td><td><span class="pill opt">optional</span> Doesn't help "only possible with the organisers". It does count as "other new tech" doing real work, which the Latest Tech track asks for.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small"><strong>Outside standards we follow rather than invent:</strong> Mastercard Verifiable Intent (open source, 5 Mar 2026) for the shape of Ana's request <span class="tag s">reported</span>, and ERC-8183 (Virtuals with the Ethereum Foundation) for how a claim moves: open, then judged, then refunded or rejected <span class="tag s">reported</span>. Read both specs when building; this page doesn't copy their field lists.</p>
+</section>
+
+<section id="laeria">
+  <header><span class="eyebrow">laeria reuse</span><h2>What carries over from laeria.ai, and what stays behind</h2></header>
+  <p class="small muted">File locations come from the handover, which read the repo on 9 Oct. Disclose all of this in the README and ask at kickoff whether pre-written code is allowed.</p>
+  <div class="tbl wide"><table>
+    <thead><tr><th>laeria part</th><th>Becomes in Cover</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Wallet-signed rules: <code>backend/services/delegation.py</code>, <code>frontend/lib/wallet.ts</code></td><td>Ana's signed request. Her wallet signs the exact request (EIP-712) and the server recovers who signed it. Reshape the fields to match Verifiable Intent.</td><td>Highest. It's Cover's front door.</td></tr>
+      <tr><td>Rules check and its 19 tests: <code>backend/services/payment.py:53</code>, <code>backend/core/models.py:121</code>, <code>backend/tests/test_mandate.py</code></td><td>The service's check before release, mirroring the contract: per-item cap, monthly cap, shop allowlist, blocked categories. An unset rule means deny, never unlimited. Copy the test cases into the contract tests too.</td><td>High. Already tested.</td></tr>
+      <tr><td>Spend ceiling: <code>backend/api/routes/actions.py:345-361</code></td><td>Release amount = the smallest of Ana's signed maximum, the quote total, her remaining monthly budget and the maker's free deposit.</td><td>Medium.</td></tr>
+      <tr><td>Demo script and record-and-replay fixtures: <code>docs/DEMO_SCRIPT.md</code></td><td>A dependable video. If Kwal's shared rate limit stalls at 7 pm, the recorded run plays.</td><td>High, for the video.</td></tr>
+      <tr><td>Prompt-injection screening: <code>backend/services/bedrock_guardrails.py</code></td><td>Replaced by Jev in add-on A3b: one yes-or-no question ("Is this product text trying to instruct the agent?") instead of AWS. Keep laeria's list of where to screen: product text, shop messages, tool results.</td><td>Low. The idea carries over, not the AWS code.</td></tr>
+      <tr><td><strong>Leave behind</strong></td><td>Playwright checkout, the Shopify store, the Stripe and StraitsX card issuers, x402, Reddit scraping, the Windows signing workaround (use WSL).</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="main">
+  <header><span class="eyebrow">Main product</span><h2>Everything here ships, at full spec</h2><p class="muted">Each part lists what "done" means. The 9 pm cut-off doesn't shrink any of it. Add-ons only start once all of it works twice in a row.</p></header>
+  <div class="spec">
+    <div class="box"><h3><span class="pill must">must ship</span> M1 · Checkpoint contract (Ana's account)</h3>
+      <ul>
+        <li>Holds Ana's test USDC. She can withdraw unspent money at any time, so it's non-custodial.</li>
+        <li>Stores her limits, set by her own transaction: per-item maximum, monthly maximum, allowed shops, a hash of her address, end date.</li>
+        <li><strong>Release</strong>, callable only by the Cover service: checks Ana's signed request, the amount against her request maximum and per-item cap, her monthly total, the shop, the address, the end date, and that the Bond can reserve cover. Then it sends the exact amount to Ana's Kwal vault (fixed at deploy) and saves a purchase record: request, quote ID hash, amount, shop, the attributes she asked for, and the attributes bought.</li>
+        <li><strong>Confirm</strong>, callable only by the service: writes the Kwal payment ID hash and the final status.</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> one Foundry test passes for each rule and each refusal, and it's deployed to Ink Sepolia with its address in the README.</p>
+    </div>
+    <div class="box"><h3><span class="pill must">must ship</span> M2 · Bond contract (maker's deposit and claims)</h3>
+      <ul>
+        <li>The maker deposits test USDC for an agent. Free cover = deposit minus amounts reserved for open purchases.</li>
+        <li><strong>Reserve</strong>, callable only by the Checkpoint: locks cover for a purchase until the claim window ends. The window is 7 days in the design and a few minutes for the demo; the README says so.</li>
+        <li><strong>Open claim</strong>, called by Ana's own wallet: for clear-cut fields (colour, size, model), the contract compares her signed value with the value bought. If they differ, it pays her the released amount at once, in the same transaction. If they match, the claim is rejected, which shows Cover is fair to makers too.</li>
+        <li>The maker can't withdraw reserved money. Other withdrawals wait out a delay.</li>
+        <li>Per-agent record: purchases, claims, refunds paid. The UI turns it into a cover fee (base fee plus claim rate). <span class="tag a">assumption: the pricing formula is ours</span></li>
+      </ul>
+      <p class="done"><strong>Done when</strong> tests cover a mismatch refund, a match rejection, an over-reserve refusal and a withdrawal blocked by reserved cover.</p>
+    </div>
+    <div class="box"><h3><span class="pill must">must ship</span> M3 · Cover service (FastAPI, Python 3.10+ in WSL)</h3>
+      <ul>
+        <li>Imports the Kwal Python client. The Kwal credentials stay on the server; the agent never sees them.</li>
+        <li>Checks Ana's signed request (laeria signed-rules code) and runs the laeria rules check before calling release.</li>
+        <li>Fills in Ana's shipping address from her saved limits. The agent can't choose an address.</li>
+        <li>Purchase runner: quote, rules check, release, wait for vault funding, checkout, wait for payment, confirm onchain.</li>
+        <li>One payment at a time (Kwal's limit), with retries every 15–30 seconds on rate limits.</li>
+        <li>Streams every step to the UI as live events.</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> one call from the agent produces a completed Kwal payment and both onchain records, with no manual steps.</p>
+    </div>
+    <div class="box"><h3><span class="pill must">must ship</span> M4 · Ana's agent (OpenAI)</h3>
+      <ul>
+        <li>Two tools: <strong>find item</strong> (Kwal search, product, variant) and <strong>covered purchase</strong> (sends the variant to the service with Ana's request).</li>
+        <li>For the demo, the agent is told to take the shop's default variant when it isn't sure. This reproduces a common real agent mistake, and the README says so plainly.</li>
+        <li>No keys, no card data, no address control.</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> "Buy the black PowerBug 25W, under $60" produces the White/Dune purchase, and "Keychron B40" produces a correct one.</p>
+    </div>
+    <div class="box"><h3><span class="pill must">must ship</span> M5 · The app (Next.js and the laeria wallet code)</h3>
+      <ul>
+        <li><strong>Ana's screen</strong> (phone-sized): set limits (one transaction), chat with her agent, a sign-request card, a purchase card that moves through checked, released, paid, and a "Wrong item" button. A refund notice shows a stopwatch from tap to money back.</li>
+        <li><strong>Maker's screen</strong>: deposit, reserved, free cover, the agent's record and its cover fee.</li>
+        <li><strong>Ledger</strong>: every step in order with its transaction hash and Kwal payment ID.</li>
+        <li>Recording layout: Ana on the left, maker on the right, ledger along the bottom, readable at 1080p.</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> the full demo (see <a href="#beats">Demo beats</a>) runs twice in a row from the UI without touching a terminal.</p>
+    </div>
+    <div class="box"><h3><span class="pill must">must ship</span> M6 · Refusal beat and record-and-replay</h3>
+      <ul>
+        <li>A hidden instruction in a fake "deal" message makes the agent try to buy the $6,599 GMKtec mini PC, shipped to a new address. The Checkpoint refuses on three counts (amount, shop, address) and no money moves. Keep it to about 15 seconds; judges have seen this before.</li>
+        <li>Recorded real runs of every Kwal call, so the video survives a flaky sandbox. They're labelled as replays if used.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="addons">
+  <header><span class="eyebrow">Optional add-ons</span><h2>What pushes the score up, in build order</h2><p class="muted">Start only when the main product works twice in a row. Each add-on can be dropped without breaking the demo.</p></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>#</th><th>Add-on</th><th>Why it helps</th><th class="num">Time</th><th>Who</th></tr></thead>
+    <tbody>
+      <tr><td>A1</td><td><strong>Explorer links and Kwal payment IDs</strong> on every ledger row, plus a "verify it yourself" link on the refund notice.</td><td>Proves the money really moved. Judges trust what they can click.</td><td class="num">20 min</td><td>Teammate</td></tr>
+      <tr><td>A2</td><td><strong>Public terms page</strong> read live from the contracts: maker deposit, reserved cover, claims paid, claim rules in plain words.</td><td>The visible difference from Ant, whose terms aren't published. Supports the pitch line.</td><td class="num">35 min</td><td>Teammate</td></tr>
+      <tr><td>A2b</td><td><strong>Fair-claim beat</strong>: Ana claims on a correct item and the contract rejects it.</td><td>Shows Cover protects makers too. Needs no new contract code.</td><td class="num">10 min</td><td>Either</td></tr>
+      <tr><td>A3</td><td><strong>Jev judge for vague claims</strong>, in the judge role of the ERC-8183 pattern. Jev gets Ana's signed request, the product description from Kwal's product lookup, and her complaint, and answers one question: does the item meet the request? Mismatch at 0.9 or higher: the judge key refunds. Match at 0.9 or higher: the claim is rejected. Anything else goes to the maker for review. The probabilities are stored with the decision onchain.</td><td>Covers mistakes plain code can't compare. A model launched three and a half weeks ago doing real work. About +0.5 on Latest Tech if it works on camera.</td><td class="num">35 min</td><td>You</td></tr>
+      <tr><td>A3b</td><td><strong>Jev injection check</strong>: before the agent uses product or shop text, Jev is asked whether the text is trying to instruct the agent. Flagged text is dropped and the event shows on the ledger.</td><td>The same risk Ant's guarantee names (prompt injection), caught before it costs anything.</td><td class="num">15 min</td><td>You</td></tr>
+      <tr><td>A4</td><td><strong>Cover MCP server</strong>: Claude or ChatGPT makes a covered purchase, backed by a second maker's deposit.</td><td>Proves any agent can plug in. Adds the "commerce in apps" theme. Strongest Latest Tech moment.</td><td class="num">50 min</td><td>You</td></tr>
+      <tr><td>A5</td><td><strong>Reap hosted approval for uncovered purchases</strong>: over Ana's per-item limit, the request goes to Reap's approval page and she pays on her own card.</td><td>Uses both Reap routes for different jobs: covered and automatic, or uncovered with a tap.</td><td class="num">60 min</td><td>You</td></tr>
+      <tr><td>A6</td><td><strong>Merchant badge</strong>: a mock shop page showing "Covered agents welcome" with the agent's live record.</td><td>Speaks to the 28% statistic. Merchants get a reason to let agents in.</td><td class="num">25 min</td><td>Teammate</td></tr>
+      <tr><td>A7</td><td><strong>Idle deposit earns yield</strong> through Payward Services.</td><td>Uses all of Payward's stack. Only if kickoff confirms credentials.</td><td class="num">?</td><td>You</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="items">
+  <header><span class="eyebrow">Demo items</span><h2>USD shops that ship to Singapore</h2><p class="muted">Prices from the organisers' sheet <span class="tag v">verified</span>. Resolve the real IDs and variants through Kwal before recording. Each beat uses a different item, because the same item and quantity gives an already-used quote for about 15 minutes.</p></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Beat</th><th>Shop</th><th>Item</th><th class="num">Price</th><th>Expected result</th></tr></thead>
+    <tbody>
+      <tr><td>Correct covered purchase</td><td>keychron.com</td><td>Keychron B40 Wireless Keyboard</td><td class="num">$49.99</td><td>Bought. The claim window opens.</td></tr>
+      <tr><td><strong>Wrong item (the moment)</strong></td><td>twelvesouth.com</td><td>PowerBug 25W (Qi2.2): asked for black, default is White/Dune</td><td class="num">$49.99</td><td>Bought, claimed, refunded from the deposit</td></tr>
+      <tr><td>Backup wrong item</td><td>satechi.net</td><td>USB-C Snap Hub: Citrus is listed; check for another colour</td><td class="num">$44.99</td><td>Same beat</td></tr>
+      <tr><td>Backup wrong item</td><td>gymshark.com</td><td>Gymshark Power T-Shirt: wrong size</td><td class="num">$36.00</td><td>Same beat, with size instead of colour</td></tr>
+      <tr><td>Refused by limits</td><td>gmktec.com</td><td>GMKtec EVO-X5 Pro mini PC, to a new address</td><td class="num">$6,599.00</td><td>Refused on amount, shop and address</td></tr>
+      <tr><td>Vague claim (A3)</td><td>satechi.net</td><td>USB-C Snap Hub, for "two external monitors from my MacBook Air". Check with Kwal's product lookup that the description shows it can't do this. If not, pick another hub under $100 whose description makes the gap clear.</td><td class="num">$44.99</td><td>Bought; Jev says mismatch; refunded</td></tr>
+      <tr><td>Fair claim (A2b)</td><td>zmdesktop.com</td><td>Modular Space-Saving Laptop Stand</td><td class="num">$58.00</td><td>Bought correctly; the claim is rejected</td></tr>
+      <tr><td>Over limit (A5)</td><td>uperfect.com</td><td>BE185GF 18.5in touchscreen</td><td class="num">$299.99</td><td>Sent to Reap's approval page, uncovered</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small"><strong>Jev only sees the text we send it.</strong> The fact that decides the claim (for example, how many displays the hub supports on that laptop) must be in Kwal's product description or in Ana's request. I believe the base MacBook Air M2 drives only one external display, but that is from memory <span class="tag a">assumption</span>, so check it before using it.</p>
+  <p class="small"><strong>Rehearsal only</strong>, to keep the recording items fresh: Epomaker Stomp switches $24.99, Divinikey HMX switches $6.30, Baron Fig Thinker Tote $95.00. <strong>Ana's demo limits:</strong> $150 a month, $100 per item, shops Keychron, Twelve South, Satechi, ZM Desktop and Gymshark, her address only, ends 31 Oct 2026.</p>
+  <div class="callout warn"><p><strong>If 1-USDC pricing is on</strong> (quote IDs start <code>sandbox_quote_</code>), every purchase actually costs 1 test USDC. The contract releases and refunds what was really paid, never the listed price. Show both on screen ("listed $49.99, sandbox charge 1 USDC") and say so in the README. Limits are checked against the listed price.</p></div>
+</section>
+
+<section id="beats">
+  <header><span class="eyebrow">Demo beats</span><h2>Under 3 minutes</h2></header>
+  <div class="beats">
+    <div class="beat"><span class="t">0:00–0:20</span><div><strong>The problem.</strong> Target's terms on screen: "considered transactions authorized by you". The 93% and 28% figures. "When the agent gets it wrong, the shopper pays."</div></div>
+    <div class="beat"><span class="t">0:20–0:45</span><div><strong>Set-up.</strong> The maker's deposit appears on the maker screen. Ana sets her limits in one transaction. Both shown on the Ink explorer.</div></div>
+    <div class="beat"><span class="t">0:45–1:10</span><div><strong>A covered purchase.</strong> "Get me the Keychron B40." Ana signs her request. The card moves through checked, released, paid. The ledger shows the release transaction and the Kwal payment ID.</div></div>
+    <div class="beat"><span class="t">1:10–1:25</span><div><strong>Limits.</strong> A fake "deal" message pushes the agent to buy the $6,599 mini PC to a new address. The Checkpoint refuses it three ways and no money moves.</div></div>
+    <div class="beat key"><span class="t">1:25–2:05</span><div><strong>The 30-second moment.</strong> "The black PowerBug 25W, under $60." The agent takes the default White/Dune and it's paid. Ana taps "Wrong item". The contract compares "Black" with "White/Dune", and the refund lands from the maker's deposit while the stopwatch reads about 10 seconds. The maker's record and cover fee tick up live.</div></div>
+    <div class="beat"><span class="t">2:05–2:35</span><div><strong>Add-ons, if built.</strong> A vague claim: the hub "can't run two monitors", Jev returns mismatch at 0.9 or higher, and the refund lands with Jev's probabilities on the ledger (A3). Claude makes a covered purchase through MCP with a second maker's deposit (A4). The public terms page (A2). A fair claim rejected (A2b).</div></div>
+    <div class="beat"><span class="t">2:35–3:00</span><div><strong>Close.</strong> "Ant and Amex keep their guarantees inside their own networks. Cover is open: the terms are code, the deposit is public, and any agent can plug in. Limits stop the money. The bond fixes the mistakes."</div></div>
+  </div>
+</section>
+
+<section id="api">
+  <header><span class="eyebrow">API calls</span><h2>Only documented routes, plus our own contracts</h2></header>
+  <h3>Kwal, through the skill's Python client <span class="tag v">verified</span></h3>
+  <p class="small">Add the skill's <code>scripts/</code> folder to the Python path. All routes sit under <code>/kwal/participant/v1/</code> on <code>api.sandbox.services.payward.com</code>.</p>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Step</th><th>Client function</th><th>Route</th></tr></thead>
+    <tbody>
+      <tr><td>Setup (you, before 3 pm)</td><td>register.py, setup</td><td><code>/initialize</code>, <code>/status</code></td></tr>
+      <tr><td>Find</td><td><code>catalog.search_products</code> · <code>read_product</code> · <code>resolve_variant</code></td><td><code>GET /products?query=</code> · <code>GET /products/{id}</code> · <code>POST /products/{id}/variant</code></td></tr>
+      <tr><td>Price</td><td><code>quotes.create_quote(lines, email, shipping_address)</code> · <code>read_quote</code> · <code>select_shipping</code></td><td><code>POST /quotes</code></td></tr>
+      <tr><td>Ready to pay?</td><td><code>vault.read_funding(quote_id=…)</code> · <code>poll_funding</code></td><td><code>GET /funding?quoteId=</code></td></tr>
+      <tr><td>Pay</td><td><code>checkout.create_checkout(payment_id, quote_id)</code></td><td><code>POST /payments</code></td></tr>
+      <tr><td>Result</td><td><code>checkout.read_payment</code> · <code>poll_payment</code></td><td><code>GET /payments/{id}</code></td></tr>
+    </tbody>
+  </table></div>
+  <h3>Our contracts on Ink Sepolia</h3>
+  <p class="small">Chain ID 763373, RPC <code>https://rpc-gel-sepolia.inkonchain.com</code>. Take the USDC token address from Kwal's funding output; don't type one from memory. Function names are proposals.</p>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Contract</th><th>Function</th><th>Who calls it</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>Checkpoint</td><td><code>setLimits</code></td><td>Ana</td><td>Per-item max, monthly max, shop list, address hash, end date</td></tr>
+      <tr><td>Checkpoint</td><td><code>release</code></td><td>Cover service</td><td>Verifies the signed request and every limit, reserves cover, sends USDC to the vault, saves the purchase record</td></tr>
+      <tr><td>Checkpoint</td><td><code>confirm</code></td><td>Cover service</td><td>Saves the Kwal payment ID hash and status</td></tr>
+      <tr><td>Checkpoint</td><td><code>withdraw</code></td><td>Ana</td><td>Takes back her unspent money</td></tr>
+      <tr><td>Bond</td><td><code>deposit</code> · <code>requestWithdraw</code></td><td>Agent maker</td><td>Adds cover. Withdrawals wait and can't touch reserved cover.</td></tr>
+      <tr><td>Bond</td><td><code>reserve</code> · <code>releaseReserve</code></td><td>Checkpoint · anyone after the window</td><td>Locks cover per purchase, then frees it</td></tr>
+      <tr><td>Bond</td><td><code>openClaim</code></td><td>Ana</td><td>Compares asked-for with bought fields; refunds on a mismatch, rejects on a match</td></tr>
+      <tr><td>Bond</td><td><code>resolveClaim</code> (A3)</td><td>Judge key, held by the Jev judge service</td><td>Refunds or rejects a vague claim and stores a hash of Jev's answer and probabilities, so anyone can audit the decision</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Reap Agentic direct (add-on A5 only)</h3>
+  <p class="small">Per the one-time purchases docs <span class="tag v">verified</span>: the card is stored on Reap's hosted card-entry page, a quote can hold several items, checkout returns the hosted approval link, then you poll the checkout. Every request needs a bearer token and a <code>Reap-Version</code> header; create calls also need an <code>Idempotency-Key</code>. Copy exact paths from docs.reap.global when building. None are invented here.</p>
+</section>
+
+<section id="plan">
+  <header><span class="eyebrow">Build plan</span><h2>Two people, 3:45 pm to 9:00 pm</h2><p class="muted"><strong>You:</strong> payments, service and agent (Kwal client, FastAPI, OpenAI agent, laeria rules). <strong>Teammate:</strong> contracts and app (Foundry, Ink deploy, Next.js, wallet signing). Both: the video. Use Codex and Devin credits for boilerplate, not for the contracts' rule logic.</p></header>
+  <div class="timeline" role="table" aria-label="Build timeline">
+    <div class="tl head" role="row"><div>Time</div><div>You</div><div>Teammate</div></div>
+    <div class="tl" role="row"><div class="t">3:00</div><div>Registration. Ask the kickoff questions.</div><div>Registration. Set up the repo, Foundry and Next.js.</div></div>
+    <div class="tl" role="row"><div class="t">3:45</div><div>Kwal client inside FastAPI. Buy one rehearsal item from code, with the vault funded by hand.</div><div>Checkpoint and Bond skeletons. Write the rule tests first, using laeria's 19 cases.</div></div>
+    <div class="tl mile" role="row"><div class="t">4:30</div><div colspan="2">Team submitted. Doors close. Reap key arrives.</div><div></div></div>
+    <div class="tl" role="row"><div class="t">4:30</div><div>Time a contract-style transfer into the vault (test 4, live). Fixed-address quotes. Port the rules check.</div><div>Finish both contracts and their tests. Deploy to Ink Sepolia by 5:30.</div></div>
+    <div class="tl" role="row"><div class="t">5:30</div><div>Chain release, funding wait, checkout and confirm in the service. Agent with two tools.</div><div>App shell, wallet connect, the limits transaction, request signing (laeria wallet code), maker screen reading the contracts.</div></div>
+    <div class="tl mile" role="row"><div class="t">6:45</div><div>Milestone: one covered purchase end to end from the app.</div><div></div></div>
+    <div class="tl" role="row"><div class="t">7:00</div><div>Dinner at the desk. Live event stream, refusal beat, record-and-replay fixtures.</div><div>Wrong-item button, claim transaction, refund notice with stopwatch, ledger view.</div></div>
+    <div class="tl mile" role="row"><div class="t">7:45</div><div>Main product complete: the full demo runs twice. Record a raw take of every beat now, as insurance.</div><div></div></div>
+    <div class="tl" role="row"><div class="t">7:50</div><div>Add-on A3 (Jev judge) and A3b, then A4 (MCP), then A5 if time allows.</div><div>A1, A2, A2b, then A6.</div></div>
+    <div class="tl mile" role="row"><div class="t">8:20</div><div>Feature freeze. Nothing new after this.</div><div></div></div>
+    <div class="tl" role="row"><div class="t">8:20</div><div>Finish the README from the outline below.</div><div>Record and edit the final video.</div></div>
+    <div class="tl mile" role="row"><div class="t">8:45</div><div>Submitted. Submissions close at 9:00 sharp.</div><div></div></div>
+  </div>
+  <div class="callout warn">
+    <p><strong>If you're late, cut in this order:</strong> add-ons A7, A6, A5, A4, A3b, A3, A2b, A2, then A1. Never cut: Ana's limits, the signed request, the checkpoint release, the Kwal payment, the claim refund, the ledger. If the funding wait is slow on camera, use the recorded run and trim the wait in the edit.</p>
+  </div>
+</section>
+
+<section id="risks">
+  <header><span class="eyebrow">Risks</span><h2>What could break, and the plan for each</h2></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Risk</th><th>Plan</th></tr></thead>
+    <tbody>
+      <tr><td>Kwal ignores a transfer from the contract (test 4 fails)</td><td>The Checkpoint releases to an operator wallet that forwards to the vault. That adds a custodial step, and the README says so. The claim and refund logic don't change.</td></tr>
+      <tr><td>The funding wait is long</td><td>Time it by 5:00. Show a "funding" step in the UI. Trim it in the edit, labelled.</td></tr>
+      <tr><td>Kwal shows an approval link on every payment (test 1)</td><td>Ana taps once per purchase. Cover's value is the refund, not "no tap", so the pitch holds.</td></tr>
+      <tr><td>1-USDC pricing</td><td>Release and refund the real sandbox charge, show the listed price beside it, and explain in the README.</td></tr>
+      <tr><td>Not enough test USDC from faucets</td><td>Collect across wallets before 3 pm. Ask organisers for more. Size the maker deposit to what you actually have; the screen shows the real number.</td></tr>
+      <tr><td>The demo item has no second colour</td><td>Use the Satechi or Gymshark backup. Check before 3 pm.</td></tr>
+      <tr><td>The wrong purchase looks staged</td><td>Show the shop's two variants side by side. Say in the video that the agent took the default, a common real mistake. Disclose the setting in the README.</td></tr>
+      <tr><td>One payment per card at a time; quotes reuse for about 15 minutes</td><td>Purchases run one at a time. Keep rehearsal items separate from recording items.</td></tr>
+      <tr><td>Kwal's vault has no refunds</td><td>By design, refunds come from the maker's deposit, not the vault. The shop keeps the sandbox payment. In real life the maker would handle the return with the shop.</td></tr>
+      <tr><td>Our service reports what was bought</td><td>Trust assumption, stated in the README. Anyone can check the quote ID against Kwal. In production, Reap or the shop would sign this record.</td></tr>
+      <tr><td>"Is this insurance? That's regulated."</td><td>It's a performance deposit posted by the agent's maker, the same model as Ant's guarantee, and not consumer insurance. The README says so.</td></tr>
+      <tr><td>"Ant already does this."</td><td>Ant's guarantee only works on Ant's network, and its terms aren't public. Cover is open, the terms are code, the deposit is public, and it pays at Reap's card shops.</td></tr>
+      <tr><td>Jev is three and a half weeks old; its accuracy on our claims is untested</td><td>Refund only at 0.9 or higher, and include a needs-review answer. Rehearse five labelled claims (clear mismatch, clear match, borderline) before recording. If Jev is down or unsure, the claim goes to maker review, never to an automatic payout.</td></tr>
+      <tr><td>Judges ask "an AI decides refunds?"</td><td>Only for vague claims, only when very sure, and its answer is stored onchain. Clear-cut claims are still decided by the contract alone.</td></tr>
+      <tr><td>Shared rate limit, 4:30 pm rush, vault queue</td><td>Vault ready before 3 pm. Retry for up to 5 minutes. Raw takes recorded at 7:45. Record-and-replay for the video.</td></tr>
+      <tr><td>Kwal registration isn't repeatable</td><td>Never re-run it after a timeout. Ask the operator instead.</td></tr>
+      <tr><td>Prior-code rule</td><td>Disclose the laeria reuse and ask at kickoff. If it isn't allowed, rewrite the signing and rules check; the contracts are new anyway.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="steer">
+  <header><span class="eyebrow">Steer-clear checklist</span><h2>Passes all four</h2></header>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Banned</th><th>Cover</th></tr></thead>
+    <tbody>
+      <tr><td>Generic shopping chatbot</td><td>No. Cover is the guarantee under any agent, not the agent. Each purchase starts from Ana's signed request naming the item, inside limits she set. The demo agent is a stand-in for any maker's agent.</td></tr>
+      <tr><td>Travel booking</td><td>No.</td></tr>
+      <tr><td>Restricted categories</td><td>Ana's shop list contains electronics and apparel only. Alcohol, supplements, jewellery and hacking tools (Flipper, Hak5) are never on it.</td></tr>
+      <tr><td>Workarounds (scraping, raw card details to an LLM)</td><td>No. Kwal has no card details to hand over, the agent never sees a card, and there's no browser checkout.</td></tr>
+      <tr><td>What starts the purchase? What does the human control?</td><td>Ana's signed request. She controls the monthly budget, the per-item maximum, the shops, the address and the end date onchain, and she can withdraw her money any time.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="compete">
+  <header><span class="eyebrow">Competition</span><h2>Who else does this, and where Cover stands</h2></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Who</th><th>What</th><th>Cover's answer</th></tr></thead>
+    <tbody>
+      <tr><td>Ant International AgentSafePay (18 Sep 2026) <span class="tag s">reported</span></td><td>100% money back for agent misreads and prompt injection on Ant's network, with trust ratings that set agent autonomy. Terms not published.</td><td>Same promise, made open: terms in code, a public deposit, and it works at Reap's card shops.</td></tr>
+      <tr><td>Amex Agent Purchase Protection (14 Apr 2026) <span class="tag s">reported</span></td><td>Covers wrong items for Amex cardholders and registered agents. Agent registration still being built. Crossmint is a partner.</td><td>Works for any agent maker that posts a deposit, with no card network gatekeeping.</td></tr>
+      <tr><td>Mastercard Verifiable Intent (5 Mar 2026) <span class="tag s">reported</span></td><td>An open standard for recording what the shopper asked for, for disputes.</td><td>We use its shape for Ana's request.</td></tr>
+      <tr><td>ERC-8183 (Virtuals and the Ethereum Foundation) <span class="tag s">reported</span></td><td>Onchain escrow, judge and refund for agent-to-agent jobs.</td><td>We follow its claim pattern and apply it to real-shop purchases.</td></tr>
+      <tr><td>AIUC, Armilla, Testudo <span class="tag s">reported</span></td><td>Company-level insurance for AI deployments.</td><td>Different product: big policies, not per-purchase refunds.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="rating">
+  <header><span class="eyebrow">Rating</span><h2>If it's fully built with a clean, good-looking demo</h2></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Track</th><th class="num">Score</th><th>Why</th><th>What would cost points</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Best Use of Latest Technology</strong> (primary)</td><td class="num"><span class="score">8.5</span></td><td>Every new piece does real work: a days-old Kwal vault funded by a contract, Mastercard's intent shape, an ERC-8183-style claim, MCP. Take one away and refunds stop. With the Jev judge (A3) working on camera: about 9.</td><td>Test 4 failing (about 7 with the forwarding fallback). A demo that looks staged.</td></tr>
+      <tr><td><strong>Most Worthwhile Problem</strong> (secondary)</td><td class="num"><span class="score">8</span></td><td>Proven pain: Target's terms, 93% of merchants, Amex and Ant both responding. Easy to understand.</td><td>The paying customer is the agent maker. Shoppers need USDC. Ant makes it look less unique.</td></tr>
+      <tr><td><strong>Best Bridge Between Onchain and Real World</strong></td><td class="num"><span class="score">6.5</span></td><td>A stablecoin deposit pays back a card purchase at a real shop.</td><td>The bridge is plumbing here, not the point.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">My guess: a top-three contender in Latest Tech if the refund moment looks real. I haven't seen what other teams are building. The two-person team doesn't change the score if everything ships; it only raises the risk of not finishing, which is why the cut order exists.</p>
+</section>
+
+<section id="submit">
+  <header><span class="eyebrow">Video and README</span><h2>What to submit</h2></header>
+  <div class="grid2">
+    <div class="box"><h3>Video</h3>
+      <ul>
+        <li>The demo beats above, under 3 minutes (confirm the length at kickoff).</li>
+        <li>10 seconds on the how-it-works diagram.</li>
+        <li>5 seconds on what's simulated.</li>
+        <li>Stopwatch and explorer links visible during the refund.</li>
+      </ul>
+    </div>
+    <div class="box"><h3>README</h3>
+      <ul>
+        <li>One line, then the problem in two sentences.</li>
+        <li>Video link and the how-it-works diagram.</li>
+        <li><strong>What's real and what's simulated</strong>, near the top: Kwal sandbox card spend and nothing ships; test USDC on Ink Sepolia; 1-USDC pricing if on; the demo agent set to take default variants; the claim window shortened for the demo; our service reports what was bought (trust assumption); the shop keeps the sandbox payment and the deposit pays Ana; a maker's guarantee, not insurance; vague claims (if A3 is built) are decided by Jev with a 0.9 threshold, and everything below it goes to maker review.</li>
+        <li>Security: the agent holds no keys, card data or address control; limits are enforced in the contract.</li>
+        <li>Tracks and themes, with the brief-check table.</li>
+        <li><strong>Prior work:</strong> reused laeria.ai code (StraitsX Agentic Playground, Aug 2026): signed rules, rules check and tests, spend ceiling, demo tooling.</li>
+        <li>How to run it, contract addresses, team.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="kickoff">
+  <header><span class="eyebrow">Kickoff</span><h2>Questions to ask at 3:30 pm</h2><p class="muted">Send me the answers and I'll update this plan.</p></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Question</th><th>What the answer changes</th></tr></thead>
+    <tbody>
+      <tr><td>Does Kwal count a token transfer from a contract as vault funding? How long until it counts?</td><td>Whether we need the forwarding fallback. The length of the funding step on camera.</td></tr>
+      <tr><td>Is 1-USDC pricing on for every team? Can organisers give extra test USDC?</td><td>The amounts on screen and the size of the maker's deposit.</td></tr>
+      <tr><td>Does a Kwal sandbox payment ever show an approval link?</td><td>Whether Ana taps once per purchase.</td></tr>
+      <tr><td>Does Kwal on its own satisfy the hard rule ("Payward's non-custodial wallet with Agentic")?</td><td>Whether add-on A5 becomes required.</td></tr>
+      <tr><td>Which test card goes on Reap's hosted card-entry page? May demos use the instant-complete header?</td><td>Whether A5 is realistic tonight.</td></tr>
+      <tr><td>Any sandbox preview of mandates or webhooks? Are the planned mandate field names final?</td><td>Ana's limit names. Live events instead of polling.</td></tr>
+      <tr><td>May we use outside APIs that aren't sponsor tech, such as Jev from TypeSafe AI?</td><td>Whether A3 and A3b stay in.</td></tr>
+      <tr><td>Do teams get Payward Services credentials?</td><td>Whether A7 exists.</td></tr>
+      <tr><td>Is pre-written code allowed? Video length and submission format?</td><td>The laeria reuse and the video cut.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="change">
+  <header><span class="eyebrow">What would change my mind</span><h2>Results that would change the plan</h2></header>
+  <div class="tbl mid"><table>
+    <thead><tr><th>If…</th><th>Then…</th></tr></thead>
+    <tbody>
+      <tr><td>Test 4 fails</td><td>Keep Cover with the forwarding fallback and say so plainly. Every "contract pays" idea loses the same ground.</td></tr>
+      <tr><td>Organisers say Kwal alone doesn't meet the hard rule</td><td>Move A5 into the main product: uncovered purchases through Reap's direct API.</td></tr>
+      <tr><td>Kickoff shows a sandbox preview of mandates</td><td>Use Reap's mandates for Ana's limits. Keep the Bond for claims.</td></tr>
+      <tr><td>Many teams pitch "agents with caps"</td><td>Lead harder with the refund moment and the public deposit. Cut the refusal beat to 10 seconds.</td></tr>
+      <tr><td>Judges stress consumer appeal</td><td>Open the video with Ana's story and the Target terms. Show the maker screen less.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>
+  <p>Sources: Reap × 65labs handover v3; the event microsite (read 9 Oct 2026); docs.reap.global changelog (nothing newer than 4 Oct); github.com/payward/kwal-skill; the organisers' merchant sheet; laeria.ai file locations from the handover; news coverage of Target's terms (Business Insider, Newsweek), the PYMNTS merchant survey, Amex ACE and Agent Purchase Protection, Ant International AgentSafePay (fintechspecs.com, PYMNTS), Mastercard Verifiable Intent, ERC-8183 explainers, MAS SAFR coverage, and coverage of TypeSafe AI's Jev (InfoQ, BenchLM, Lindy, FreeAPIHub) (searched 9 Oct 2026).</p>
+  <p>Ana and the agent maker are example people. Numbers marked assumption haven't been measured.</p>
+</footer>
+
+</div>
