@@ -1,0 +1,21 @@
+# Last matching pattern wins. Review the ownership exceptions before moving files.
+# These identities are Jaydon (repo owner) and Francesco (authenticated GitHub user).
+* @jaydonnnk @techalpon
+
+/contracts/ @jaydonnnk
+/contracts/lib/erc-8004-contracts @techalpon
+/contracts/lib/erc-8004-contracts/ @techalpon
+/service/ @techalpon
+/service/guard/ @jaydonnnk
+/service/payments/ @jaydonnnk
+/service/fixtures/ @jaydonnnk
+/app/ @techalpon
+/app/lib/wallet.ts @jaydonnnk
+/scripts/ @jaydonnnk
+/docs/DEMO_SCRIPT.md @jaydonnnk
+
+# Coordinate changes to these files; GitHub cannot assign ownership by JSON key.
+/shared/ @jaydonnnk @techalpon
+/deployments/ @jaydonnnk @techalpon
+/.gitmodules @jaydonnnk @techalpon
+/.github/ @jaydonnnk @techalpon

@@ -1,0 +1,24 @@
+{
+  "domain": {
+    "name": "Cover",
+    "version": "1",
+    "chainId": 763373,
+    "verifyingContract": "<Checkpoint address>"
+  },
+  "primaryType": "PurchaseRequest",
+  "types": {
+    "PurchaseRequest": [
+      { "name": "shopper", "type": "address" },
+      { "name": "agentId", "type": "uint256" },
+      { "name": "shop", "type": "string" },
+      { "name": "item", "type": "string" },
+      { "name": "colour", "type": "string" },
+      { "name": "size", "type": "string" },
+      { "name": "model", "type": "string" },
+      { "name": "maxUsdCents", "type": "uint256" },
+      { "name": "addressHash", "type": "bytes32" },
+      { "name": "nonce", "type": "uint256" },
+      { "name": "deadline", "type": "uint256" }
+    ]
+  }
+}

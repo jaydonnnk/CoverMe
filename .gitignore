@@ -1,0 +1,40 @@
+# Secrets: keep credentials outside this repository, even when these rules match.
+.env
+.env.*
+!.env.example
+*credentials*
+!*.example
+*.pem
+*.key
+keystore/
+
+# JavaScript / Next.js
+node_modules/
+.next/
+out/
+build/
+coverage/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+*-debug.log*
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Foundry / Hardhat
+cache/
+broadcast/
+artifacts/
+
+# Editors / operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp

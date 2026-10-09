@@ -1,0 +1,15 @@
+{
+  "chainId": 763373,
+  "network": "ink-sepolia",
+  "rpcUrl": "https://rpc-gel-sepolia.inkonchain.com",
+  "registries": {
+    "Identity": { "address": null, "abi": [] },
+    "Reputation": { "address": null, "abi": [] },
+    "agentId": null
+  },
+  "cover": {
+    "Checkpoint": { "address": null, "abi": [] },
+    "Bond": { "address": null, "abi": [] },
+    "USDC": { "address": null, "abi": [] }
+  }
+}
