@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-09T11:34:05+00:00",
+  "method": "POST",
+  "path": "/kwal/participant/v1/products/prd_bc7c360929de4980ae77aab82a8ca557/variant",
+  "request": {
+    "optionIds": [
+      "eyJuIjoiQ29sb3IiLCJsIjoiQ2hhcmNvYWwgQmxhY2sifQ"
+    ]
+  },
+  "response": {
+    "variantId": "var_b500e3942cdb46b7a00b246aa7ee16f4",
+    "title": "Charcoal Black",
+    "price": {
+      "minorUnits": "1999",
+      "currency": "USD",
+      "decimals": 2
+    },
+    "purchasable": true
+  },
+  "error": null
+}

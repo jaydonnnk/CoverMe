@@ -1,0 +1,45 @@
+{
+  "recorded_at": "2026-10-09T11:40:20+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/funding?quoteId=076abbf0-5c42-42e7-8d60-7e5a9851ae46",
+  "request": null,
+  "response": {
+    "state": "PARTICIPANT_FUNDING_STATE_READY",
+    "vaultAddress": "0x2dF401bA23216Bc593D052697893554B55Eda0fb",
+    "chain": "eip155:763373",
+    "available": {
+      "minorUnits": "60000000",
+      "currency": "USDC",
+      "decimals": 6
+    },
+    "required": {
+      "minorUnits": "15730000",
+      "currency": "USDC",
+      "decimals": 6
+    },
+    "instructions": {
+      "chainId": "763373",
+      "tokenAddress": "0xFabab97dCE620294D2B0b0e46C68964e326300Ac",
+      "tokenDecimals": 6,
+      "usdcFaucetUrl": "https://faucet.circle.com",
+      "gasFaucetUrl": "https://inkonchain.com/faucet",
+      "transferInstructions": "Take test USDC from the Circle faucet. The app sends 0.0001 Ink Sepolia ETH whenever your owner wallet has zero ETH. A nonzero balance needs no top-up. Check your wallet balance before transferring USDC. Send USDC from your owner wallet to the answered vault address on Ink Sepolia. If another wallet sends the USDC, that wallet needs its own ETH for gas. The gas faucet link is an optional fallback. The balance counts as available after the deposit finalizes."
+    },
+    "ownerAddress": "0x3aDe6336e45c37a41193aEcb9b02315eA59268d0",
+    "quoteFunding": {
+      "quoteId": "076abbf0-5c42-42e7-8d60-7e5a9851ae46",
+      "merchantTotal": {
+        "minorUnits": "1573",
+        "currency": "USD",
+        "decimals": 2
+      },
+      "fundingToken": {
+        "chainId": "763373",
+        "contractAddress": "0xFabab97dCE620294D2B0b0e46C68964e326300Ac",
+        "symbol": "USDC",
+        "decimals": 6
+      }
+    }
+  },
+  "error": null
+}

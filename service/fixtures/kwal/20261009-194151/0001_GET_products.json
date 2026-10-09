@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-10-09T11:41:51+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/products?query=HMX+Snowflake&limit=5",
+  "request": null,
+  "response": {
+    "products": [
+      {
+        "productId": "prd_1535f0a186cf40c4a68ba803ee38a3b4",
+        "title": "HMX Snowflake Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "63",
+          "currency": "USD",
+          "decimals": 1
+        }
+      },
+      {
+        "productId": "prd_ae861579664c48d88664cc91faa2b839",
+        "title": "HMX Retro R Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "684",
+          "currency": "USD",
+          "decimals": 2
+        }
+      },
+      {
+        "productId": "prd_27909b3441624ebe86f77eb72039e172",
+        "title": "HMX Rosa Centifolia Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "63",
+          "currency": "USD",
+          "decimals": 1
+        }
+      },
+      {
+        "productId": "prd_d8ff51845bd14d18a0cf1a65e30fb505",
+        "title": "HMX Crisp Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "576",
+          "currency": "USD",
+          "decimals": 2
+        }
+      }
+    ]
+  },
+  "error": null
+}

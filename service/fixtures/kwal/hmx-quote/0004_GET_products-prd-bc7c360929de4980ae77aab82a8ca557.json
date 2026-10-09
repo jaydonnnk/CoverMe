@@ -1,0 +1,50 @@
+{
+  "recorded_at": "2026-10-09T11:34:02+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/products/prd_bc7c360929de4980ae77aab82a8ca557",
+  "request": null,
+  "response": {
+    "product": {
+      "productId": "prd_bc7c360929de4980ae77aab82a8ca557",
+      "title": "SISU Large NextGen Aero Guard 2.0mm Adult Mouthguard",
+      "merchant": "Forza Sports",
+      "price": {
+        "minorUnits": "1999",
+        "currency": "USD",
+        "decimals": 2
+      }
+    },
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          {
+            "optionId": "eyJuIjoiQ29sb3IiLCJsIjoiSG90IFBpbmsifQ",
+            "label": "Hot Pink"
+          },
+          {
+            "optionId": "eyJuIjoiQ29sb3IiLCJsIjoiSW50ZW5zZSBSZWQifQ",
+            "label": "Intense Red"
+          },
+          {
+            "optionId": "eyJuIjoiQ29sb3IiLCJsIjoiTmVvbiBGbGFzaCJ9",
+            "label": "Neon Flash"
+          },
+          {
+            "optionId": "eyJuIjoiQ29sb3IiLCJsIjoiUm95YWwgQmx1ZSJ9",
+            "label": "Royal Blue"
+          },
+          {
+            "optionId": "eyJuIjoiQ29sb3IiLCJsIjoiU25vdyBXaGl0ZSJ9",
+            "label": "Snow White"
+          },
+          {
+            "optionId": "eyJuIjoiQ29sb3IiLCJsIjoiQ2hhcmNvYWwgQmxhY2sifQ",
+            "label": "Charcoal Black"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}

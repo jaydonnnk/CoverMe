@@ -1,0 +1,8 @@
+{
+  "recorded_at": "2026-10-09T11:39:27+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/products?query=HMX+Snowflake&limit=5",
+  "request": null,
+  "response": null,
+  "error": "GET /kwal/participant/v1/products?query=HMX+Snowflake&limit=5 did not complete."
+}

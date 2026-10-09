@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-09T11:34:03+00:00",
+  "method": "POST",
+  "path": "/kwal/participant/v1/products/prd_bc7c360929de4980ae77aab82a8ca557/variant",
+  "request": {
+    "optionIds": [
+      "eyJuIjoiQ29sb3IiLCJsIjoiU25vdyBXaGl0ZSJ9"
+    ]
+  },
+  "response": {
+    "variantId": "var_4bd8019757e24fecbd37ee4f0af74a31",
+    "title": "Snow White",
+    "price": {
+      "minorUnits": "1999",
+      "currency": "USD",
+      "decimals": 2
+    },
+    "purchasable": true
+  },
+  "error": null
+}

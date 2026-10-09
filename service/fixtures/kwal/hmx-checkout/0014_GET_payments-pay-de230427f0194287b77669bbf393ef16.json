@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-09T11:49:34+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/payments/pay_de230427f0194287b77669bbf393ef16",
+  "request": null,
+  "response": {
+    "paymentId": "pay_de230427f0194287b77669bbf393ef16",
+    "state": "PARTICIPANT_PAYMENT_STATE_PENDING",
+    "step": "card_clearing",
+    "cardTransactionId": "825d8aec-141f-47ee-97ed-d7f8e571ab6c",
+    "collectionId": "collection-v1-86277c5f5dbb6199990fc9d38d426b2431d45d9446bde84f0d639dad85a7a4e7",
+    "reason": "cleared; waiting for the vault collection to finalize",
+    "amount": {
+      "minorUnits": "15730000",
+      "currency": "USD",
+      "decimals": 6
+    },
+    "quoteId": "1d809e2a-6e71-4321-8b1f-fb75d74c43e2"
+  },
+  "error": null
+}

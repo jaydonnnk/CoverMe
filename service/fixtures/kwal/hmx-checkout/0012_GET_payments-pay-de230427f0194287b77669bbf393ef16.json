@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-10-09T11:49:26+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/payments/pay_de230427f0194287b77669bbf393ef16",
+  "request": null,
+  "response": {
+    "paymentId": "pay_de230427f0194287b77669bbf393ef16",
+    "state": "PARTICIPANT_PAYMENT_STATE_PENDING",
+    "step": "card_clearing",
+    "cardTransactionId": "825d8aec-141f-47ee-97ed-d7f8e571ab6c",
+    "reason": "the simulated clearing is sent; waiting for the Reap result",
+    "amount": {
+      "minorUnits": "15730000",
+      "currency": "USD",
+      "decimals": 6
+    },
+    "quoteId": "1d809e2a-6e71-4321-8b1f-fb75d74c43e2",
+    "held": {
+      "minorUnits": "15730000",
+      "currency": "USDC",
+      "decimals": 6
+    }
+  },
+  "error": null
+}
