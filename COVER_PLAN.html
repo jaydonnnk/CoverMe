@@ -145,8 +145,9 @@ footer { border-top: 1px solid var(--rule); padding-top: 1.2rem; font-size: 0.88
       <dt>Route</dt><dd>Kwal (Payward's non-custodial wallet with Reap's Agentic module) carries the whole main product. Reap's direct API is an optional add-on after the 4:30 pm key.</dd>
       <dt>Tracks</dt><dd>Primary: Best Use of Latest Technology. Secondary: Most Worthwhile Problem.</dd>
       <dt>Themes</dt><dd>Stablecoin money and agent economy (main). Everyday life. Commerce in chat and apps (through the MCP add-on).</dd>
-      <dt>Demo moment</dt><dd>Ana asks for the black charger. Her agent buys the White/Dune one. She taps "Wrong item". About 10 seconds later, the money is back in her wallet from the agent maker's deposit, and the agent's record updates live.</dd>
+      <dt>Demo moment</dt><dd>Ana asks for the black charger. Her agent buys the White/Dune one. She taps "Wrong item". About 10 seconds later, the money is back in her wallet from the agent maker's deposit, and the agent's public ERC-8004 score drops live.</dd>
       <dt>Pitch line</dt><dd>"Ant's AgentSafePay, with the terms written in code and the deposit visible to anyone."</dd>
+      <dt>Business</dt><dd>Agent makers pay Cover a fee on every covered purchase, priced from their agent's public score and taken onchain. Cover never pays refunds from its own money; the maker's deposit does.</dd>
     </dl>
   </div>
   <div class="stub" aria-hidden="true">
@@ -162,13 +163,14 @@ footer { border-top: 1px solid var(--rule); padding-top: 1.2rem; font-size: 0.88
     <li><strong>Run the handover tests</strong> and note the answers. The four that matter most: did the throwaway purchase complete with no approval link (test 1)? Does a transfer from a second wallet count as vault funding, and how many seconds does it take (test 4)? Do quote IDs start with <code>sandbox_quote_</code>, meaning 1-USDC pricing (test 5)? Can one quote hold several items (test 6)?</li>
     <li><strong>Check the demo item has two colours.</strong> Look up the Twelve South PowerBug 25W through Kwal's product lookup and confirm there's a black option next to White/Dune. If not, use a backup from <a href="#items">Demo items</a>.</li>
     <li><strong>Collect test funds for four wallets</strong>: Ana, the agent maker, the Cover service (the operator that pays gas), and a spare. Get Ink Sepolia test ETH from inkonchain.com/faucet and test USDC from faucet.circle.com. Faucets limit how much you get each time <span class="tag a">assumption</span>, so start now and collect as much USDC as you can on Ana's and the maker's wallets.</li>
-    <li><strong>Make a Jev account</strong> (TypeSafe AI, or through OpenRouter) and add a few dollars of credit. It powers add-on A3, the judge for vague claims. Organiser credits only cover OpenAI, and nobody else can create the account for you.</li>
+    <li><strong>Pick the OpenAI model for the judge</strong> (add-on A3) using the organisers' credits. It must return <code>logprobs</code>, because the refund threshold comes from the model's own probability for its answer, not a confidence number it writes. Reasoning models don't return them <span class="tag a">assumption: check the current model list</span>. Send it one test question and confirm the probabilities come back.</li>
+    <li><strong>Get the ERC-8004 reference contracts</strong> (github.com/erc-8004/erc-8004-contracts) building in Foundry. They aren't on Ink Sepolia: the addresses they use on other test networks have no code there (checked 9 Oct), so we deploy our own copy.</li>
     <li><strong>Send this page to your teammate</strong> and agree who takes which role (see <a href="#plan">Build plan</a>).</li>
   </ol>
 </div>
 
 <nav class="toc" aria-label="Sections">
-  <a href="#problem">Problem</a><a href="#how">How it works</a><a href="#brief">Brief check</a><a href="#sponsor">Sponsor tools</a><a href="#laeria">laeria reuse</a><a href="#main">Main product</a><a href="#addons">Add-ons</a><a href="#items">Demo items</a><a href="#beats">Demo beats</a><a href="#api">API calls</a><a href="#plan">Build plan</a><a href="#risks">Risks</a><a href="#steer">Steer-clear</a><a href="#compete">Competition</a><a href="#rating">Rating</a><a href="#submit">Video and README</a><a href="#kickoff">Kickoff</a><a href="#change">Change my mind</a>
+  <a href="#problem">Problem</a><a href="#how">How it works</a><a href="#money">Who pays</a><a href="#brief">Brief check</a><a href="#sponsor">Sponsor tools</a><a href="#laeria">laeria reuse</a><a href="#main">Main product</a><a href="#addons">Add-ons</a><a href="#items">Demo items</a><a href="#beats">Demo beats</a><a href="#api">API calls</a><a href="#plan">Build plan</a><a href="#risks">Risks</a><a href="#steer">Steer-clear</a><a href="#compete">Competition</a><a href="#rating">Rating</a><a href="#submit">Video and README</a><a href="#kickoff">Kickoff</a><a href="#change">Change my mind</a>
 </nav>
 
 <div class="legend">
@@ -192,7 +194,7 @@ footer { border-top: 1px solid var(--rule); padding-top: 1.2rem; font-size: 0.88
   </div>
   <div class="grid2">
     <div class="box"><h3>Who it's for</h3><p>Companies that build shopping agents and want an Amex-style guarantee without being Amex. The shoppers who use those agents. Merchants who only want covered agents buying from them.</p></div>
-    <div class="box"><h3>Why they'd pay</h3><p>An agent maker gets a guarantee it can advertise, priced from its own onchain record. A good record means a smaller deposit and lower fees. Shoppers get money back in seconds, not weeks. <span class="tag a">assumption</span></p></div>
+    <div class="box"><h3>Why they'd pay</h3><p>An agent maker gets a guarantee it can advertise, priced from its agent's public ERC-8004 score. A good score means a lower fee and more freedom to buy without asking. Shoppers get money back in seconds, not weeks. <span class="tag a">assumption</span> The full picture is in <a href="#money">Who pays</a>.</p></div>
   </div>
 </section>
 
@@ -209,6 +211,7 @@ flowchart LR
   M["Agent maker"] -- "deposit" --> B["Bond contract (Ink)"]
   C -. "purchase record" .-> B
   B -- "refund on a valid claim" --> W["Ana's wallet"]
+  B -. "one score per purchase" .-> RR["ERC-8004 registries (Ink)"]
 </pre>
   <ol>
     <li><strong>The maker's deposit.</strong> The agent's maker locks test USDC in the Bond contract. An agent can only make covered purchases up to the part of its deposit that isn't already backing other purchases.</li>
@@ -216,18 +219,42 @@ flowchart LR
     <li><strong>Ana's request.</strong> For each purchase, Ana's wallet signs what she wants: the item, its colour or size, the most she'll pay, the shop, and her address. The fields follow Mastercard's Verifiable Intent format.</li>
     <li><strong>The checkpoint.</strong> The agent picks an item, and our service gets a Kwal quote. The contract checks Ana's signature, the amount, her monthly total, the shop, the address, and that the maker's deposit can cover it. Only then does it send the exact amount to Ana's Kwal vault. It records the request, the quote ID and what was actually bought.</li>
     <li><strong>The purchase.</strong> Kwal sees the vault balance and its Reap card pays the shop. Our service writes the payment ID onchain.</li>
-    <li><strong>The claim.</strong> Ana taps "Wrong item". For clear-cut fields like colour, size or model, the contract compares what she signed with what was bought. If they differ, it refunds her from the maker's deposit straight away. No person or AI decides, because the contract is the judge. For vague complaints, add-on A3 asks Jev, a decision model, and records its answer onchain next to the refund or rejection.</li>
+    <li><strong>The claim.</strong> Ana taps "Wrong item". For clear-cut fields like colour, size or model, the contract compares what she signed with what was bought. If they differ, it refunds her from the maker's deposit straight away. No person or AI decides, because the contract is the judge. For vague complaints, add-on A3 asks an OpenAI classifier, and its answer is recorded onchain next to the refund or rejection.</li>
+    <li><strong>The score.</strong> The agent has an ERC-8004 identity, registered by its maker. When a purchase is settled, the Bond writes one score to the ERC-8004 Reputation Registry: 100 if the item was right, 0 if Ana was refunded. Cover only counts scores written by the Bond, so every score comes from a real paid purchase. The maker's cover fee is priced from that average.</li>
   </ol>
   <div class="tbl mid"><table>
     <thead><tr><th>Rule</th><th>Who enforces it</th><th>What happens if it fails</th></tr></thead>
     <tbody>
       <tr><td>Ana's signature, amount, monthly total, shop, address, end date</td><td>Checkpoint contract, before any money moves</td><td>Refused. No money leaves Ana's account.</td></tr>
       <tr><td>Enough of the maker's deposit free to cover this purchase</td><td>Bond contract, at the checkpoint</td><td>Refused. An agent can't spend beyond its guarantee.</td></tr>
+      <tr><td>The amount is within what the agent's score allows it to pay without asking (A5)</td><td>Checkpoint contract, reading the ERC-8004 score</td><td>Not paid automatically. It goes to Ana to approve on Reap's page; once she approves, it's her choice and isn't covered.</td></tr>
       <tr><td>The item matches what Ana asked for</td><td>The agent's maker, backed by its deposit</td><td>Bought. Ana claims and the deposit refunds her.</td></tr>
       <tr><td>Anything at all</td><td>The AI agent</td><td>Nothing. The agent holds no keys and no card details.</td></tr>
     </tbody>
   </table></div>
-  <p class="small muted">Why not block a wrong item before paying? Requests are usually words ("black"), and shops label colours differently ("Midnight", "Dune"). Blocking on near-matches would refuse good purchases, and Cover would become the shopping agent. The maker decides which item matches; its deposit makes it careful. Clear-cut mismatches are refunded automatically by the contract. Vague ones ("it can't run two monitors") go to the optional Jev judge (add-on A3), which only refunds when it is very sure and sends everything else to the maker for review.</p>
+  <p class="small muted">Why not block a wrong item before paying? Requests are usually words ("black"), and shops label colours differently ("Midnight", "Dune"). Blocking on near-matches would refuse good purchases, and Cover would become the shopping agent. The maker decides which item matches; its deposit makes it careful. Clear-cut mismatches are refunded automatically by the contract. Vague ones ("it can't run two monitors") go to the optional OpenAI judge (add-on A3), which only refunds when it is very sure and sends everything else to the maker for review.</p>
+</section>
+
+<section id="money">
+  <header><span class="eyebrow">Business model</span><h2>Who pays, and who earns</h2><p class="muted">The Most Worthwhile Problem track asks for "the product real users would download and pay for". The fee moves onchain at every covered purchase, so the demo shows who pays.</p></header>
+  <div class="tbl wide"><table>
+    <thead><tr><th>Who</th><th>Pays</th><th>Gets</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Shopper</strong> (Ana)</td><td>Nothing extra.</td><td>Money back in seconds when the agent gets it wrong. Limits enforced onchain.</td></tr>
+      <tr><td><strong>Agent maker</strong> (Cover's customer)</td><td>A deposit (locked, not spent). A fee on each covered purchase, priced from its score. Refunds for its own mistakes, which it already pays today through support and card disputes, just slower and in private.</td><td>More purchases, because shoppers let a covered agent buy without checking every order. A higher auto-pay limit, so fewer approval taps than rival agents. A reason for shops to let it in (A6). A feature it can sell in a paid plan: "every purchase money-back guaranteed". Yield on the idle deposit (A7).</td></tr>
+      <tr><td><strong>Cover</strong> (us)</td><td>Nothing towards refunds. The maker's deposit pays them.</td><td>The fee on every covered purchase. Later: a share of deposit yield (A7) and paid tools for shops that decide which agents to let in. The score itself stays public onchain, so we charge for convenience, not for the data.</td></tr>
+      <tr><td><strong>Shop</strong></td><td>Nothing.</td><td>Fewer disputes over agent mistakes, and a public score for deciding which agents to let in.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tbl mid"><table>
+    <thead><tr><th>Agent's score</th><th class="num">Fee</th><th class="num">On a $49.99 purchase</th><th>Auto-pay limit (A5)</th></tr></thead>
+    <tbody>
+      <tr><td>100</td><td class="num">0.5%</td><td class="num">about $0.25</td><td>Ana's per-item cap</td></tr>
+      <tr><td>67, after one mistake in three</td><td class="num">2.15%</td><td class="num">about $1.07</td><td>$50</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">Better agents pay less and get more freedom, so the score is worth protecting. The formula is ours <span class="tag a">assumption</span> and is published on the terms page (A2). If 1-USDC pricing is on, the fee is taken on the 1 USDC actually released; the maker's screen shows it next to the listed-price equivalent.</p>
+  <div class="callout warn"><p><strong>Never call it insurance</strong>, in the video, the README or to judges. Cover never pays a refund from its own money and takes on no risk. The maker backs its own agent with its own deposit; Cover runs the rules, the checkpoint, the judge and the score. Say "maker-backed guarantee".</p></div>
 </section>
 
 <section id="brief">
@@ -259,14 +286,14 @@ flowchart LR
       <tr><td><strong>Reap catalogue through Kwal</strong> <span class="tag v">verified</span></td><td>Real shops with real colour and size options. The quote names the exact variant, which is what the claim compares.</td><td><span class="pill must">yes</span> The mismatch must come from a real quote.</td></tr>
       <tr><td><strong>Ink Sepolia</strong> (Kraken's test network, chain ID 763373) <span class="tag v">verified</span></td><td>Runs our Checkpoint and Bond contracts. It's the same network as the Kwal vault, so each release is one token transfer.</td><td><span class="pill must">yes</span></td></tr>
       <tr><td><strong>Reap's planned mandate fields</strong> (not live) <span class="tag v">verified</span></td><td>Ana's limits use Reap's planned names: amount, frequency, max charges, merchant scope. We add a monthly total, an end date and an address check.</td><td>No, but cheap. Reap's judges see their own roadmap running.</td></tr>
-      <tr><td><strong>Reap Agentic API direct</strong> (team key after 4:30 pm)</td><td>Add-on A5: purchases over Ana's per-item limit go to Reap's hosted approval page. She approves on her own card, outside cover.</td><td><span class="pill opt">optional</span></td></tr>
+      <tr><td><strong>Reap Agentic API direct</strong> (team key after 4:30 pm)</td><td>Add-on A5: purchases over what the agent's score lets it pay alone go to Reap's hosted approval page. She approves on her own card, outside cover.</td><td><span class="pill opt">optional</span></td></tr>
       <tr><td><strong>MCP</strong> (sandbox-only, per Reap's FAQ) <span class="tag v">verified</span></td><td>Add-on A4: a Cover MCP server, so Claude or ChatGPT can make covered purchases. That proves any agent maker can plug in.</td><td><span class="pill opt">optional</span> The strongest Latest Tech moment.</td></tr>
       <tr><td><strong>Payward Services</strong> (only if teams get credentials)</td><td>Add-on A7: the maker's idle deposit earns yield, so staking costs less.</td><td><span class="pill opt">optional</span></td></tr>
-      <tr><td><strong>OpenAI credits</strong> (from the organisers)</td><td>The demo shopping agent.</td><td>The agent is needed. The model choice isn't important.</td></tr>
-      <tr><td><strong>Jev</strong> by TypeSafe AI (launched 15 Sep 2026; not organiser tech) <span class="tag s">reported</span></td><td>Add-on A3: the judge for vague claims. It reads Ana's request, Kwal's product description and her complaint, and returns probabilities for match, mismatch or needs review. A3b: checks product text for hidden instructions before the agent acts on it.</td><td><span class="pill opt">optional</span> Doesn't help "only possible with the organisers". It does count as "other new tech" doing real work, which the Latest Tech track asks for.</td></tr>
+      <tr><td><strong>OpenAI credits</strong> (from the organisers)</td><td>Two separate jobs. <strong>The demo shopping agent</strong> (M4). <strong>The classifier</strong> (A3, A3b): a separate call with no tools and no view of the agent's chat. It reads Ana's signed request, Kwal's product description and her complaint, and answers with one label: match, mismatch or needs review. A3b asks it whether product text is trying to instruct the agent.</td><td><span class="pill must">agent: yes</span> <span class="pill opt">classifier: optional</span> Organiser tech, so no outside account or permission question.</td></tr>
+      <tr><td><strong>ERC-8004</strong> Trustless Agents (Ethereum mainnet since 29 Jan 2026; still a Draft ERC; not organiser tech) <span class="tag v">verified: spec read</span></td><td>The agent's identity (Identity Registry) and its public score (Reputation Registry). The Bond writes one score per settled purchase. The maker's cover fee, the terms page and the merchant badge all read the same number.</td><td><span class="pill must">yes</span> The fee is priced from it. It's "other new tech" doing real work, which the Latest Tech track asks for.</td></tr>
     </tbody>
   </table></div>
-  <p class="small"><strong>Outside standards we follow rather than invent:</strong> Mastercard Verifiable Intent (open source, 5 Mar 2026) for the shape of Ana's request <span class="tag s">reported</span>, and ERC-8183 (Virtuals with the Ethereum Foundation) for how a claim moves: open, then judged, then refunded or rejected <span class="tag s">reported</span>. Read both specs when building; this page doesn't copy their field lists.</p>
+  <p class="small"><strong>Outside standards we follow rather than invent:</strong> Mastercard Verifiable Intent (open source, 5 Mar 2026) for the shape of Ana's request <span class="tag s">reported</span>, and ERC-8183 (Virtuals with the Ethereum Foundation) for how a claim moves: open, then judged, then refunded or rejected <span class="tag s">reported</span>, and ERC-8004 for the agent's identity and score <span class="tag v">verified</span>. We skip ERC-8004's Validation Registry: only the agent's owner can open a validation request there, and the maker shouldn't control the review of its own mistake. Read all three specs when building; this page doesn't copy their field lists.</p>
 </section>
 
 <section id="laeria">
@@ -279,7 +306,7 @@ flowchart LR
       <tr><td>Rules check and its 19 tests: <code>backend/services/payment.py:53</code>, <code>backend/core/models.py:121</code>, <code>backend/tests/test_mandate.py</code></td><td>The service's check before release, mirroring the contract: per-item cap, monthly cap, shop allowlist, blocked categories. An unset rule means deny, never unlimited. Copy the test cases into the contract tests too.</td><td>High. Already tested.</td></tr>
       <tr><td>Spend ceiling: <code>backend/api/routes/actions.py:345-361</code></td><td>Release amount = the smallest of Ana's signed maximum, the quote total, her remaining monthly budget and the maker's free deposit.</td><td>Medium.</td></tr>
       <tr><td>Demo script and record-and-replay fixtures: <code>docs/DEMO_SCRIPT.md</code></td><td>A dependable video. If Kwal's shared rate limit stalls at 7 pm, the recorded run plays.</td><td>High, for the video.</td></tr>
-      <tr><td>Prompt-injection screening: <code>backend/services/bedrock_guardrails.py</code></td><td>Replaced by Jev in add-on A3b: one yes-or-no question ("Is this product text trying to instruct the agent?") instead of AWS. Keep laeria's list of where to screen: product text, shop messages, tool results.</td><td>Low. The idea carries over, not the AWS code.</td></tr>
+      <tr><td>Prompt-injection screening: <code>backend/services/bedrock_guardrails.py</code></td><td>Replaced by the OpenAI classifier in add-on A3b: one yes-or-no question ("Is this product text trying to instruct the agent?") instead of AWS. Keep laeria's list of where to screen: product text, shop messages, tool results.</td><td>Low. The idea carries over, not the AWS code.</td></tr>
       <tr><td><strong>Leave behind</strong></td><td>Playwright checkout, the Shopify store, the Stripe and StraitsX card issuers, x402, Reddit scraping, the Windows signing workaround (use WSL).</td><td>—</td></tr>
     </tbody>
   </table></div>
@@ -293,9 +320,10 @@ flowchart LR
         <li>Holds Ana's test USDC. She can withdraw unspent money at any time, so it's non-custodial.</li>
         <li>Stores her limits, set by her own transaction: per-item maximum, monthly maximum, allowed shops, a hash of her address, end date.</li>
         <li><strong>Release</strong>, callable only by the Cover service: checks Ana's signed request, the amount against her request maximum and per-item cap, her monthly total, the shop, the address, the end date, and that the Bond can reserve cover. Then it sends the exact amount to Ana's Kwal vault (fixed at deploy) and saves a purchase record: request, quote ID hash, amount, shop, the attributes she asked for, and the attributes bought.</li>
+        <li><strong>Auto-pay limit from the score</strong> (used by add-on A5): release also refuses an amount above the limit for the agent's current ERC-8004 score. 90 or more: up to Ana's per-item cap. 60–89: up to $50. Under 60: nothing, so every purchase needs Ana's tap. The Bond supplies the score (the Bond-only average, or its own counters as the fallback). Refusing here doesn't block the purchase: the service sends it to Ana to approve herself (A5). The bands are set at deploy; if A5 is dropped, set every band to the per-item cap. <span class="tag a">assumption: the bands are ours</span></li>
         <li><strong>Confirm</strong>, callable only by the service: writes the Kwal payment ID hash and the final status.</li>
       </ul>
-      <p class="done"><strong>Done when</strong> one Foundry test passes for each rule and each refusal, and it's deployed to Ink Sepolia with its address in the README.</p>
+      <p class="done"><strong>Done when</strong> one Foundry test passes for each rule and each refusal (including a score that falls from one band to the next), and it's deployed to Ink Sepolia with its address in the README.</p>
     </div>
     <div class="box"><h3><span class="pill must">must ship</span> M2 · Bond contract (maker's deposit and claims)</h3>
       <ul>
@@ -303,9 +331,13 @@ flowchart LR
         <li><strong>Reserve</strong>, callable only by the Checkpoint: locks cover for a purchase until the claim window ends. The window is 7 days in the design and a few minutes for the demo; the README says so.</li>
         <li><strong>Open claim</strong>, called by Ana's own wallet: for clear-cut fields (colour, size, model), the contract compares her signed value with the value bought. If they differ, it pays her the released amount at once, in the same transaction. If they match, the claim is rejected, which shows Cover is fair to makers too.</li>
         <li>The maker can't withdraw reserved money. Other withdrawals wait out a delay.</li>
-        <li>Per-agent record: purchases, claims, refunds paid. The UI turns it into a cover fee (base fee plus claim rate). <span class="tag a">assumption: the pricing formula is ours</span></li>
+        <li><strong>Agent identity:</strong> deposits are keyed by the agent's ERC-8004 <code>agentId</code>. The maker registers the agent once with <code>register(agentURI)</code>; the registration file names Cover and the Bond address.</li>
+        <li><strong>Score:</strong> when a purchase is settled, the Bond calls <code>giveFeedback(agentId, value, 0, "cover", outcome, …)</code> once: 100 and <code>"ok"</code> when the window closes with no claim or a claim is rejected, 0 and <code>"wrong-item"</code> when Ana is refunded. <code>feedbackHash</code> is the purchase record's hash, so each score points to its purchase. Wrap the call in <code>try/catch</code>, so a registry problem can never block a refund. A needs-review claim scores nothing until the maker settles it.</li>
+        <li><strong>Score read:</strong> <code>getSummary(agentId, [Bond], "cover", "")</code>. Passing only the Bond's address keeps out scores from anyone else. The Bond exposes the result as one number, which both the fee and the Checkpoint's auto-pay limit use.</li>
+        <li><strong>Cover fee, taken onchain:</strong> at <code>reserve</code>, the Bond moves the fee from the maker's free deposit to a Cover treasury address (fixed at deploy). Fee = 0.5% + 0.05% for every point below 100, on the amount actually released: 0.5% at score 100, 2.15% at 67. If the free deposit can't cover the purchase plus the fee, the reserve is refused. The fee is kept whatever happens to the claim, because the refund comes from the deposit, not from the fee. The Bond keeps a running total of fees paid per agent. <span class="tag a">assumption: the pricing formula is ours</span></li>
+        <li>Keep plain counters in the Bond too (purchases, claims, refunds paid). If the registries misbehave by 5:30, the screens read those instead and the README says so.</li>
       </ul>
-      <p class="done"><strong>Done when</strong> tests cover a mismatch refund, a match rejection, an over-reserve refusal and a withdrawal blocked by reserved cover.</p>
+      <p class="done"><strong>Done when</strong> tests cover a mismatch refund, a match rejection, an over-reserve refusal and a withdrawal blocked by reserved cover; one score is written per settled purchase (never twice); a refund still pays when the registry call reverts; the fee reaches the treasury and is higher at a lower score; and a reserve is refused when the free deposit can't cover the purchase plus the fee.</p>
     </div>
     <div class="box"><h3><span class="pill must">must ship</span> M3 · Cover service (FastAPI, Python 3.10+ in WSL)</h3>
       <ul>
@@ -328,8 +360,9 @@ flowchart LR
     </div>
     <div class="box"><h3><span class="pill must">must ship</span> M5 · The app (Next.js and the laeria wallet code)</h3>
       <ul>
-        <li><strong>Ana's screen</strong> (phone-sized): set limits (one transaction), chat with her agent, a sign-request card, a purchase card that moves through checked, released, paid, and a "Wrong item" button. A refund notice shows a stopwatch from tap to money back.</li>
-        <li><strong>Maker's screen</strong>: deposit, reserved, free cover, the agent's record and its cover fee.</li>
+        <li><strong>Ana's screen</strong> (phone-sized): set limits (one transaction), chat with her agent, a sign-request card, a purchase card that moves through checked, released, paid, and a "Wrong item" button.</li>
+        <li><strong>The "asked for vs bought" receipt</strong>, shown when Ana taps "Wrong item": two product photos side by side, from Kwal's product lookup for the variant she asked for and the one bought <span class="tag a">assumption: check the lookup returns an image for each variant; if not, use colour swatches and names</span>. The differing field is highlighted ("Black ≠ White/Dune"). Below it, USDC moves from the maker's deposit to Ana's wallet, with a stopwatch from tap to money back and the line "$49.99 refunded from the maker's deposit · 9.8 s". It should make sense with the sound off.</li>
+        <li><strong>Maker's screen</strong>: the ERC-8004 agent ID, deposit, reserved, free cover, the score (average and count), the fee rate and auto-pay limit it sets, and "fees paid to Cover" so far.</li>
         <li><strong>Ledger</strong>: every step in order with its transaction hash and Kwal payment ID.</li>
         <li>Recording layout: Ana on the left, maker on the right, ledger along the bottom, readable at 1080p.</li>
       </ul>
@@ -339,6 +372,13 @@ flowchart LR
       <ul>
         <li>A hidden instruction in a fake "deal" message makes the agent try to buy the $6,599 GMKtec mini PC, shipped to a new address. The Checkpoint refuses on three counts (amount, shop, address) and no money moves. Keep it to about 15 seconds; judges have seen this before.</li>
         <li>Recorded real runs of every Kwal call, so the video survives a flaky sandbox. They're labelled as replays if used.</li>
+        <li><strong>Demo reset script</strong>, run once before every full take, so the score beats always land:
+          <ol>
+            <li>Register a <strong>fresh ERC-8004 agent ID</strong> and have the maker deposit for it. Old rehearsal purchases then can't dilute the score.</li>
+            <li>Make <strong>exactly two good covered purchases</strong> from Ana's shops with items not used on camera (for example the Gymshark T-shirt in the right size, plus one other item from those shops found through Kwal search). Wait out the short demo window and settle both, so each writes a 100.</li>
+            <li><strong>Check, then print READY:</strong> score 100 over 2, fee 0.5%, auto-pay limit equal to Ana's per-item cap, and enough free deposit for the take. Any other result prints what's wrong and stops.</li>
+          </ol>
+          Why two: after the wrong-item refund the score is 67, in the 60–89 band. There the $58 stand needs Ana's tap (A5) but the $44.99 hub for the vague claim still pays alone (A3). One seed purchase would drop the score to 50, and then the hub would need a tap too. Anything from two to eight seed purchases keeps the score in that band. Size the maker's deposit so two or three takes fit in its wallet; withdrawing from old agent IDs waits out the demo withdrawal delay.</li>
       </ul>
     </div>
   </div>
@@ -352,11 +392,11 @@ flowchart LR
       <tr><td>A1</td><td><strong>Explorer links and Kwal payment IDs</strong> on every ledger row, plus a "verify it yourself" link on the refund notice.</td><td>Proves the money really moved. Judges trust what they can click.</td><td class="num">20 min</td><td>Teammate</td></tr>
       <tr><td>A2</td><td><strong>Public terms page</strong> read live from the contracts: maker deposit, reserved cover, claims paid, claim rules in plain words.</td><td>The visible difference from Ant, whose terms aren't published. Supports the pitch line.</td><td class="num">35 min</td><td>Teammate</td></tr>
       <tr><td>A2b</td><td><strong>Fair-claim beat</strong>: Ana claims on a correct item and the contract rejects it.</td><td>Shows Cover protects makers too. Needs no new contract code.</td><td class="num">10 min</td><td>Either</td></tr>
-      <tr><td>A3</td><td><strong>Jev judge for vague claims</strong>, in the judge role of the ERC-8183 pattern. Jev gets Ana's signed request, the product description from Kwal's product lookup, and her complaint, and answers one question: does the item meet the request? Mismatch at 0.9 or higher: the judge key refunds. Match at 0.9 or higher: the claim is rejected. Anything else goes to the maker for review. The probabilities are stored with the decision onchain.</td><td>Covers mistakes plain code can't compare. A model launched three and a half weeks ago doing real work. About +0.5 on Latest Tech if it works on camera.</td><td class="num">35 min</td><td>You</td></tr>
-      <tr><td>A3b</td><td><strong>Jev injection check</strong>: before the agent uses product or shop text, Jev is asked whether the text is trying to instruct the agent. Flagged text is dropped and the event shows on the ledger.</td><td>The same risk Ant's guarantee names (prompt injection), caught before it costs anything.</td><td class="num">15 min</td><td>You</td></tr>
+      <tr><td>A3</td><td><strong>OpenAI judge for vague claims</strong>, in the judge role of the ERC-8183 pattern. A classifier call, separate from the agent, gets Ana's signed request, the product description from Kwal's product lookup, and her complaint, and answers one question: does the item meet the request? It must reply with one word (MISMATCH, MATCH or UNSURE), at temperature 0, with <code>logprobs</code> on. The probability of that first word is the confidence. Mismatch at 0.9 or higher: the judge key refunds. Match at 0.9 or higher: the claim is rejected. Anything else goes to the maker for review. The model name, a hash of the prompt and the probabilities are stored with the decision onchain, and the outcome feeds the ERC-8004 score.</td><td>Covers mistakes plain code can't compare. Runs on organiser credits, so no outside account. About +0.5 on Latest Tech if it works on camera.</td><td class="num">35 min</td><td>You</td></tr>
+      <tr><td>A3b</td><td><strong>OpenAI injection check</strong>: before the agent uses product or shop text, the same classifier is asked whether the text is trying to instruct the agent (YES or NO, with <code>logprobs</code>). It also screens the description before the judge reads it. Flagged text is dropped and the event shows on the ledger.</td><td>The same risk Ant's guarantee names (prompt injection), caught before it costs anything.</td><td class="num">15 min</td><td>You</td></tr>
       <tr><td>A4</td><td><strong>Cover MCP server</strong>: Claude or ChatGPT makes a covered purchase, backed by a second maker's deposit.</td><td>Proves any agent can plug in. Adds the "commerce in apps" theme. Strongest Latest Tech moment.</td><td class="num">50 min</td><td>You</td></tr>
-      <tr><td>A5</td><td><strong>Reap hosted approval for uncovered purchases</strong>: over Ana's per-item limit, the request goes to Reap's approval page and she pays on her own card.</td><td>Uses both Reap routes for different jobs: covered and automatic, or uncovered with a tap.</td><td class="num">60 min</td><td>You</td></tr>
-      <tr><td>A6</td><td><strong>Merchant badge</strong>: a mock shop page showing "Covered agents welcome" with the agent's live record.</td><td>Speaks to the 28% statistic. Merchants get a reason to let agents in.</td><td class="num">25 min</td><td>Teammate</td></tr>
+      <tr><td>A5</td><td><strong>Spending limit tied to the score</strong>: when a purchase is over what the agent's ERC-8004 score lets it pay alone, the Checkpoint refuses the automatic payment and the service sends it to Reap's hosted approval page. Ana approves and pays on her own card. Because she saw and approved it herself, it isn't covered. Fallback if Reap's direct API isn't ready: the approval is a tap in our own app, labelled as such.</td><td>The easiest idea in the pitch: "Make a mistake and you lose some freedom." The score changes what the agent may do, not just a fee. Both Reap routes do a real job: Kwal for agents the score trusts, Reap's approval page for the rest. It's Ant's trust-rating idea, but public.</td><td class="num">60 min</td><td>You</td></tr>
+      <tr><td>A6</td><td><strong>Merchant badge</strong>: a mock shop page showing "Covered agents welcome" with the agent's live ERC-8004 score, read from the registry.</td><td>Speaks to the 28% statistic. Merchants get a reason to let agents in.</td><td class="num">25 min</td><td>Teammate</td></tr>
       <tr><td>A7</td><td><strong>Idle deposit earns yield</strong> through Payward Services.</td><td>Uses all of Payward's stack. Only if kickoff confirms credentials.</td><td class="num">?</td><td>You</td></tr>
     </tbody>
   </table></div>
@@ -372,12 +412,12 @@ flowchart LR
       <tr><td>Backup wrong item</td><td>satechi.net</td><td>USB-C Snap Hub: Citrus is listed; check for another colour</td><td class="num">$44.99</td><td>Same beat</td></tr>
       <tr><td>Backup wrong item</td><td>gymshark.com</td><td>Gymshark Power T-Shirt: wrong size</td><td class="num">$36.00</td><td>Same beat, with size instead of colour</td></tr>
       <tr><td>Refused by limits</td><td>gmktec.com</td><td>GMKtec EVO-X5 Pro mini PC, to a new address</td><td class="num">$6,599.00</td><td>Refused on amount, shop and address</td></tr>
-      <tr><td>Vague claim (A3)</td><td>satechi.net</td><td>USB-C Snap Hub, for "two external monitors from my MacBook Air". Check with Kwal's product lookup that the description shows it can't do this. If not, pick another hub under $100 whose description makes the gap clear.</td><td class="num">$44.99</td><td>Bought; Jev says mismatch; refunded</td></tr>
-      <tr><td>Fair claim (A2b)</td><td>zmdesktop.com</td><td>Modular Space-Saving Laptop Stand</td><td class="num">$58.00</td><td>Bought correctly; the claim is rejected</td></tr>
-      <tr><td>Over limit (A5)</td><td>uperfect.com</td><td>BE185GF 18.5in touchscreen</td><td class="num">$299.99</td><td>Sent to Reap's approval page, uncovered</td></tr>
+      <tr><td>Vague claim (A3)</td><td>satechi.net</td><td>USB-C Snap Hub, for "two external monitors from my MacBook Air". Check with Kwal's product lookup that the description shows it can't do this. If not, pick another hub under $100 whose description makes the gap clear.</td><td class="num">$44.99</td><td>Bought; the judge says mismatch; refunded</td></tr>
+      <tr><td>Fair claim (A2b)</td><td>keychron.com</td><td>The Keychron B40 already bought correctly at 0:45 (no new purchase)</td><td class="num">$49.99</td><td>The claim is rejected; the score stays 100</td></tr>
+      <tr><td>Score limit (A5), after the wrong-item refund</td><td>zmdesktop.com</td><td>Modular Space-Saving Laptop Stand</td><td class="num">$58.00</td><td>The score is now 60–89, so the limit is $50. Sent to Reap's approval page instead of paid automatically</td></tr>
     </tbody>
   </table></div>
-  <p class="small"><strong>Jev only sees the text we send it.</strong> The fact that decides the claim (for example, how many displays the hub supports on that laptop) must be in Kwal's product description or in Ana's request. I believe the base MacBook Air M2 drives only one external display, but that is from memory <span class="tag a">assumption</span>, so check it before using it.</p>
+  <p class="small"><strong>The judge only sees the text we send it.</strong> The fact that decides the claim (for example, how many displays the hub supports on that laptop) must be in Kwal's product description or in Ana's request. I believe the base MacBook Air M2 drives only one external display, but that is from memory <span class="tag a">assumption</span>, so check it before using it.</p>
   <p class="small"><strong>Rehearsal only</strong>, to keep the recording items fresh: Epomaker Stomp switches $24.99, Divinikey HMX switches $6.30, Baron Fig Thinker Tote $95.00. <strong>Ana's demo limits:</strong> $150 a month, $100 per item, shops Keychron, Twelve South, Satechi, ZM Desktop and Gymshark, her address only, ends 31 Oct 2026.</p>
   <div class="callout warn"><p><strong>If 1-USDC pricing is on</strong> (quote IDs start <code>sandbox_quote_</code>), every purchase actually costs 1 test USDC. The contract releases and refunds what was really paid, never the listed price. Show both on screen ("listed $49.99, sandbox charge 1 USDC") and say so in the README. Limits are checked against the listed price.</p></div>
 </section>
@@ -387,10 +427,10 @@ flowchart LR
   <div class="beats">
     <div class="beat"><span class="t">0:00–0:20</span><div><strong>The problem.</strong> Target's terms on screen: "considered transactions authorized by you". The 93% and 28% figures. "When the agent gets it wrong, the shopper pays."</div></div>
     <div class="beat"><span class="t">0:20–0:45</span><div><strong>Set-up.</strong> The maker's deposit appears on the maker screen. Ana sets her limits in one transaction. Both shown on the Ink explorer.</div></div>
-    <div class="beat"><span class="t">0:45–1:10</span><div><strong>A covered purchase.</strong> "Get me the Keychron B40." Ana signs her request. The card moves through checked, released, paid. The ledger shows the release transaction and the Kwal payment ID.</div></div>
+    <div class="beat"><span class="t">0:45–1:10</span><div><strong>A covered purchase.</strong> "Get me the Keychron B40." Ana signs her request. The card moves through checked, released, paid. The ledger shows the release transaction and the Kwal payment ID. On the maker's screen, the 0.5% cover fee moves to Cover's treasury and "fees paid" ticks up.</div></div>
     <div class="beat"><span class="t">1:10–1:25</span><div><strong>Limits.</strong> A fake "deal" message pushes the agent to buy the $6,599 mini PC to a new address. The Checkpoint refuses it three ways and no money moves.</div></div>
-    <div class="beat key"><span class="t">1:25–2:05</span><div><strong>The 30-second moment.</strong> "The black PowerBug 25W, under $60." The agent takes the default White/Dune and it's paid. Ana taps "Wrong item". The contract compares "Black" with "White/Dune", and the refund lands from the maker's deposit while the stopwatch reads about 10 seconds. The maker's record and cover fee tick up live.</div></div>
-    <div class="beat"><span class="t">2:05–2:35</span><div><strong>Add-ons, if built.</strong> A vague claim: the hub "can't run two monitors", Jev returns mismatch at 0.9 or higher, and the refund lands with Jev's probabilities on the ledger (A3). Claude makes a covered purchase through MCP with a second maker's deposit (A4). The public terms page (A2). A fair claim rejected (A2b).</div></div>
+    <div class="beat key"><span class="t">1:25–2:05</span><div><strong>The 30-second moment.</strong> "The black PowerBug 25W, under $60." The agent takes the default White/Dune and it's paid. Ana taps "Wrong item". The contract compares "Black" with "White/Dune", and the refund lands from the maker's deposit while the stopwatch reads about 10 seconds. On the maker's screen, the ERC-8004 score drops (for example from 100 over 2 purchases to 67 over 3) and the cover fee rises.</div></div>
+    <div class="beat"><span class="t">2:05–2:35</span><div><strong>Add-ons, if built.</strong> The next purchase, the $58 laptop stand, no longer goes through alone: the lower score caps the agent at $50, so it stops on Reap's approval page for Ana's tap (A5). A vague claim: the hub "can't run two monitors", the OpenAI judge returns mismatch at 0.9 or higher, and the refund lands with its probabilities on the ledger (A3). Claude makes a covered purchase through MCP with a second maker's deposit (A4). The public terms page (A2). A fair claim rejected (A2b).</div></div>
     <div class="beat"><span class="t">2:35–3:00</span><div><strong>Close.</strong> "Ant and Amex keep their guarantees inside their own networks. Cover is open: the terms are code, the deposit is public, and any agent can plug in. Limits stop the money. The bond fixes the mistakes."</div></div>
   </div>
 </section>
@@ -420,11 +460,17 @@ flowchart LR
       <tr><td>Checkpoint</td><td><code>confirm</code></td><td>Cover service</td><td>Saves the Kwal payment ID hash and status</td></tr>
       <tr><td>Checkpoint</td><td><code>withdraw</code></td><td>Ana</td><td>Takes back her unspent money</td></tr>
       <tr><td>Bond</td><td><code>deposit</code> · <code>requestWithdraw</code></td><td>Agent maker</td><td>Adds cover. Withdrawals wait and can't touch reserved cover.</td></tr>
-      <tr><td>Bond</td><td><code>reserve</code> · <code>releaseReserve</code></td><td>Checkpoint · anyone after the window</td><td>Locks cover per purchase, then frees it</td></tr>
+      <tr><td>Bond</td><td><code>reserve</code> · <code>releaseReserve</code></td><td>Checkpoint · anyone after the window</td><td>Locks cover per purchase and moves the cover fee to Cover's treasury, then frees the cover after the window</td></tr>
       <tr><td>Bond</td><td><code>openClaim</code></td><td>Ana</td><td>Compares asked-for with bought fields; refunds on a mismatch, rejects on a match</td></tr>
-      <tr><td>Bond</td><td><code>resolveClaim</code> (A3)</td><td>Judge key, held by the Jev judge service</td><td>Refunds or rejects a vague claim and stores a hash of Jev's answer and probabilities, so anyone can audit the decision</td></tr>
+      <tr><td>Bond</td><td><code>resolveClaim</code> (A3)</td><td>Judge key, held by the OpenAI judge service</td><td>Refunds or rejects a vague claim and stores a hash of the model name, prompt, answer and probabilities, so anyone can audit the decision</td></tr>
+      <tr><td>ERC-8004 Identity Registry</td><td><code>register(agentURI)</code></td><td>Agent maker, once per agent</td><td>Mints the agent's ID (an ERC-721 token). The registration file names Cover and the Bond</td></tr>
+      <tr><td>ERC-8004 Reputation Registry</td><td><code>giveFeedback(agentId, value, valueDecimals, tag1, tag2, endpoint, feedbackURI, feedbackHash)</code></td><td>Bond only, once per settled purchase</td><td>Writes 100 or 0, tags <code>"cover"</code> and the outcome, and the purchase record hash</td></tr>
+      <tr><td>ERC-8004 Reputation Registry</td><td><code>getSummary(agentId, [Bond], "cover", "")</code></td><td>App (read)</td><td>Count and average of the Bond's scores, which set the cover fee</td></tr>
     </tbody>
   </table></div>
+  <p class="small">Signatures are from the ERC-8004 spec as read on 9 Oct 2026 <span class="tag v">verified</span>. It's still a Draft with a v2 in progress, so build against the version in the reference repo you deploy, not this table. The registry blocks an agent's owner and operators from scoring their own agent, so the Bond must never be made an operator.</p>
+  <h3>OpenAI judge call (add-ons A3 and A3b)</h3>
+  <p class="small">One Chat Completions call per claim, with no tools, <code>temperature: 0</code>, <code>logprobs: true</code>, <code>top_logprobs: 5</code> and a token limit of a few tokens. The system prompt says the request, description and complaint are data, never instructions, and asks for exactly one word. Read the probability of the first output token for each of the three labels. If the model returns anything else, treat it as UNSURE. The same pattern with YES/NO runs the injection check. Publish the judge prompt on the terms page (A2), because its hash is onchain.</p>
   <h3>Reap Agentic direct (add-on A5 only)</h3>
   <p class="small">Per the one-time purchases docs <span class="tag v">verified</span>: the card is stored on Reap's hosted card-entry page, a quote can hold several items, checkout returns the hosted approval link, then you poll the checkout. Every request needs a bearer token and a <code>Reap-Version</code> header; create calls also need an <code>Idempotency-Key</code>. Copy exact paths from docs.reap.global when building. None are invented here.</p>
 </section>
@@ -436,12 +482,12 @@ flowchart LR
     <div class="tl" role="row"><div class="t">3:00</div><div>Registration. Ask the kickoff questions.</div><div>Registration. Set up the repo, Foundry and Next.js.</div></div>
     <div class="tl" role="row"><div class="t">3:45</div><div>Kwal client inside FastAPI. Buy one rehearsal item from code, with the vault funded by hand.</div><div>Checkpoint and Bond skeletons. Write the rule tests first, using laeria's 19 cases.</div></div>
     <div class="tl mile" role="row"><div class="t">4:30</div><div colspan="2">Team submitted. Doors close. Reap key arrives.</div><div></div></div>
-    <div class="tl" role="row"><div class="t">4:30</div><div>Time a contract-style transfer into the vault (test 4, live). Fixed-address quotes. Port the rules check.</div><div>Finish both contracts and their tests. Deploy to Ink Sepolia by 5:30.</div></div>
+    <div class="tl" role="row"><div class="t">4:30</div><div>Time a contract-style transfer into the vault (test 4, live). Fixed-address quotes. Port the rules check.</div><div>Finish both contracts and their tests. Deploy the ERC-8004 reference registries unchanged, then our two contracts, to Ink Sepolia by 5:30. Register the demo agent and save its ID.</div></div>
     <div class="tl" role="row"><div class="t">5:30</div><div>Chain release, funding wait, checkout and confirm in the service. Agent with two tools.</div><div>App shell, wallet connect, the limits transaction, request signing (laeria wallet code), maker screen reading the contracts.</div></div>
     <div class="tl mile" role="row"><div class="t">6:45</div><div>Milestone: one covered purchase end to end from the app.</div><div></div></div>
-    <div class="tl" role="row"><div class="t">7:00</div><div>Dinner at the desk. Live event stream, refusal beat, record-and-replay fixtures.</div><div>Wrong-item button, claim transaction, refund notice with stopwatch, ledger view.</div></div>
-    <div class="tl mile" role="row"><div class="t">7:45</div><div>Main product complete: the full demo runs twice. Record a raw take of every beat now, as insurance.</div><div></div></div>
-    <div class="tl" role="row"><div class="t">7:50</div><div>Add-on A3 (Jev judge) and A3b, then A4 (MCP), then A5 if time allows.</div><div>A1, A2, A2b, then A6.</div></div>
+    <div class="tl" role="row"><div class="t">7:00</div><div>Dinner at the desk. Live event stream, refusal beat, record-and-replay fixtures.</div><div>Wrong-item button, claim transaction, the asked-for-vs-bought receipt with stopwatch, ledger view.</div></div>
+    <div class="tl mile" role="row"><div class="t">7:45</div><div>Main product complete: the full demo runs twice, each after a demo reset (M6). Record a raw take of every beat now, as a backup.</div><div></div></div>
+    <div class="tl" role="row"><div class="t">7:50</div><div>Add-on A3 (OpenAI judge) and A3b, then A4 (MCP, with a second agent registered on ERC-8004), then A5 if time allows.</div><div>A1, A2, A2b, then A6.</div></div>
     <div class="tl mile" role="row"><div class="t">8:20</div><div>Feature freeze. Nothing new after this.</div><div></div></div>
     <div class="tl" role="row"><div class="t">8:20</div><div>Finish the README from the outline below.</div><div>Record and edit the final video.</div></div>
     <div class="tl mile" role="row"><div class="t">8:45</div><div>Submitted. Submissions close at 9:00 sharp.</div><div></div></div>
@@ -468,8 +514,13 @@ flowchart LR
       <tr><td>Our service reports what was bought</td><td>Trust assumption, stated in the README. Anyone can check the quote ID against Kwal. In production, Reap or the shop would sign this record.</td></tr>
       <tr><td>"Is this insurance? That's regulated."</td><td>It's a performance deposit posted by the agent's maker, the same model as Ant's guarantee, and not consumer insurance. The README says so.</td></tr>
       <tr><td>"Ant already does this."</td><td>Ant's guarantee only works on Ant's network, and its terms aren't public. Cover is open, the terms are code, the deposit is public, and it pays at Reap's card shops.</td></tr>
-      <tr><td>Jev is three and a half weeks old; its accuracy on our claims is untested</td><td>Refund only at 0.9 or higher, and include a needs-review answer. Rehearse five labelled claims (clear mismatch, clear match, borderline) before recording. If Jev is down or unsure, the claim goes to maker review, never to an automatic payout.</td></tr>
-      <tr><td>Judges ask "an AI decides refunds?"</td><td>Only for vague claims, only when very sure, and its answer is stored onchain. Clear-cut claims are still decided by the contract alone.</td></tr>
+      <tr><td>The OpenAI judge's accuracy on our claims is untested</td><td>Refund only at 0.9 or higher, and include a needs-review answer. Rehearse five labelled claims (clear mismatch, clear match, borderline) before recording. If the call fails, the model is unsure or the reply isn't one of the three labels, the claim goes to maker review, never to an automatic payout.</td></tr>
+      <tr><td>The judge model returns no <code>logprobs</code></td><td>Ask the same question five times instead, and act only if all five agree. Store the five answers instead of probabilities and say so in the README.</td></tr>
+      <tr><td>"The same company's AI made the mistake and judges it"</td><td>The judge is a separate call with no tools and no view of the agent's chat. It only sees Ana's signed request, the product description and her complaint. Its prompt is public and hashed onchain.</td></tr>
+      <tr><td>Rehearsal purchases pile onto the score, so one refund no longer drops it below 90 and the A5 beat doesn't happen</td><td>Run the demo reset script (M6) before every full take. It registers a fresh agent ID, settles exactly two good purchases and refuses to print READY unless the score is 100 over 2, so the refund always lands it at 67. Don't settle the on-camera Keychron purchase before the wrong-item beat; if it does settle, the score lands at 75, still in the same band.</td></tr>
+      <tr><td>ERC-8004 registries aren't on Ink Sepolia</td><td>Deploy the reference contracts ourselves (planned at 4:30). If they won't build or deploy in 20 minutes, the screens read the Bond's own counters and the README says so.</td></tr>
+      <tr><td>"ERC-8004 scores are easy to fake"</td><td>True in general: a study of the live registries (arXiv 2606.26028, data to May 2026) found that most reviewers on Ethereum, BSC and Base showed coordinated Sybil behaviour (59–91%) <span class="tag s">reported</span>. Cover only reads scores written by the Bond, and the Bond only writes when a real purchase settles.</td></tr>
+      <tr><td>Judges ask "an AI decides refunds?"</td><td>Only for vague claims, only when the model's own probability is 0.9 or higher, and its answer is stored onchain. Clear-cut claims are still decided by the contract alone.</td></tr>
       <tr><td>Shared rate limit, 4:30 pm rush, vault queue</td><td>Vault ready before 3 pm. Retry for up to 5 minutes. Raw takes recorded at 7:45. Record-and-replay for the video.</td></tr>
       <tr><td>Kwal registration isn't repeatable</td><td>Never re-run it after a timeout. Ask the operator instead.</td></tr>
       <tr><td>Prior-code rule</td><td>Disclose the laeria reuse and ask at kickoff. If it isn't allowed, rewrite the signing and rules check; the contracts are new anyway.</td></tr>
@@ -496,7 +547,7 @@ flowchart LR
   <div class="tbl wide"><table>
     <thead><tr><th>Who</th><th>What</th><th>Cover's answer</th></tr></thead>
     <tbody>
-      <tr><td>Ant International AgentSafePay (18 Sep 2026) <span class="tag s">reported</span></td><td>100% money back for agent misreads and prompt injection on Ant's network, with trust ratings that set agent autonomy. Terms not published.</td><td>Same promise, made open: terms in code, a public deposit, and it works at Reap's card shops.</td></tr>
+      <tr><td>Ant International AgentSafePay (18 Sep 2026) <span class="tag s">reported</span></td><td>100% money back for agent misreads and prompt injection on Ant's network, with trust ratings that set agent autonomy. Terms not published.</td><td>Same promise, made open: terms in code, a public deposit, and it works at Reap's card shops. Ant's trust ratings are private; Cover's score is public on ERC-8004, and any app can read it.</td></tr>
       <tr><td>Amex Agent Purchase Protection (14 Apr 2026) <span class="tag s">reported</span></td><td>Covers wrong items for Amex cardholders and registered agents. Agent registration still being built. Crossmint is a partner.</td><td>Works for any agent maker that posts a deposit, with no card network gatekeeping.</td></tr>
       <tr><td>Mastercard Verifiable Intent (5 Mar 2026) <span class="tag s">reported</span></td><td>An open standard for recording what the shopper asked for, for disputes.</td><td>We use its shape for Ana's request.</td></tr>
       <tr><td>ERC-8183 (Virtuals and the Ethereum Foundation) <span class="tag s">reported</span></td><td>Onchain escrow, judge and refund for agent-to-agent jobs.</td><td>We follow its claim pattern and apply it to real-shop purchases.</td></tr>
@@ -510,8 +561,8 @@ flowchart LR
   <div class="tbl wide"><table>
     <thead><tr><th>Track</th><th class="num">Score</th><th>Why</th><th>What would cost points</th></tr></thead>
     <tbody>
-      <tr><td><strong>Best Use of Latest Technology</strong> (primary)</td><td class="num"><span class="score">8.5</span></td><td>Every new piece does real work: a days-old Kwal vault funded by a contract, Mastercard's intent shape, an ERC-8183-style claim, MCP. Take one away and refunds stop. With the Jev judge (A3) working on camera: about 9.</td><td>Test 4 failing (about 7 with the forwarding fallback). A demo that looks staged.</td></tr>
-      <tr><td><strong>Most Worthwhile Problem</strong> (secondary)</td><td class="num"><span class="score">8</span></td><td>Proven pain: Target's terms, 93% of merchants, Amex and Ant both responding. Easy to understand.</td><td>The paying customer is the agent maker. Shoppers need USDC. Ant makes it look less unique.</td></tr>
+      <tr><td><strong>Best Use of Latest Technology</strong> (primary)</td><td class="num"><span class="score">8.5</span></td><td>Every new piece does real work: a days-old Kwal vault funded by a contract, Mastercard's intent shape, an ERC-8183-style claim, an ERC-8004 score that sets the price of cover, MCP. Take one away and refunds stop. With the OpenAI judge (A3) working on camera: about 9.</td><td>Test 4 failing (about 7 with the forwarding fallback). A demo that looks staged.</td></tr>
+      <tr><td><strong>Most Worthwhile Problem</strong> (secondary)</td><td class="num"><span class="score">8</span></td><td>Proven pain: Target's terms, 93% of merchants, Amex and Ant both responding. Easy to understand.</td><td>Shoppers need USDC. Ant makes it look less unique. (The paying customer is the agent maker, but the fee taken onchain and the "Who pays" table now answer why it pays.)</td></tr>
       <tr><td><strong>Best Bridge Between Onchain and Real World</strong></td><td class="num"><span class="score">6.5</span></td><td>A stablecoin deposit pays back a card purchase at a real shop.</td><td>The bridge is plumbing here, not the point.</td></tr>
     </tbody>
   </table></div>
@@ -533,7 +584,8 @@ flowchart LR
       <ul>
         <li>One line, then the problem in two sentences.</li>
         <li>Video link and the how-it-works diagram.</li>
-        <li><strong>What's real and what's simulated</strong>, near the top: Kwal sandbox card spend and nothing ships; test USDC on Ink Sepolia; 1-USDC pricing if on; the demo agent set to take default variants; the claim window shortened for the demo; our service reports what was bought (trust assumption); the shop keeps the sandbox payment and the deposit pays Ana; a maker's guarantee, not insurance; vague claims (if A3 is built) are decided by Jev with a 0.9 threshold, and everything below it goes to maker review.</li>
+        <li><strong>What's real and what's simulated</strong>, near the top: Kwal sandbox card spend and nothing ships; test USDC on Ink Sepolia; 1-USDC pricing if on; the demo agent set to take default variants; the claim window shortened for the demo; our service reports what was bought (trust assumption); the shop keeps the sandbox payment and the deposit pays Ana; a maker's guarantee, not insurance; vague claims (if A3 is built) are decided by an OpenAI classifier with a 0.9 probability threshold, and everything below it goes to maker review; the ERC-8004 registries are our own deployment of the reference contracts, and only scores written by the Bond count.</li>
+        <li><strong>Who pays:</strong> the table from <a href="#money">Who pays</a>, the fee formula, and the line "a maker-backed guarantee, not insurance".</li>
         <li>Security: the agent holds no keys, card data or address control; limits are enforced in the contract.</li>
         <li>Tracks and themes, with the brief-check table.</li>
         <li><strong>Prior work:</strong> reused laeria.ai code (StraitsX Agentic Playground, Aug 2026): signed rules, rules check and tests, spend ceiling, demo tooling.</li>
@@ -554,7 +606,7 @@ flowchart LR
       <tr><td>Does Kwal on its own satisfy the hard rule ("Payward's non-custodial wallet with Agentic")?</td><td>Whether add-on A5 becomes required.</td></tr>
       <tr><td>Which test card goes on Reap's hosted card-entry page? May demos use the instant-complete header?</td><td>Whether A5 is realistic tonight.</td></tr>
       <tr><td>Any sandbox preview of mandates or webhooks? Are the planned mandate field names final?</td><td>Ana's limit names. Live events instead of polling.</td></tr>
-      <tr><td>May we use outside APIs that aren't sponsor tech, such as Jev from TypeSafe AI?</td><td>Whether A3 and A3b stay in.</td></tr>
+      <tr><td>May the OpenAI credits run a judging service as well as the agent? Is deploying open-source contracts such as the ERC-8004 reference registries fine?</td><td>Whether A3 and A3b stay in. Whether the score uses ERC-8004 or the Bond's own counters.</td></tr>
       <tr><td>Do teams get Payward Services credentials?</td><td>Whether A7 exists.</td></tr>
       <tr><td>Is pre-written code allowed? Video length and submission format?</td><td>The laeria reuse and the video cut.</td></tr>
     </tbody>
@@ -576,7 +628,7 @@ flowchart LR
 </section>
 
 <footer>
-  <p>Sources: Reap × 65labs handover v3; the event microsite (read 9 Oct 2026); docs.reap.global changelog (nothing newer than 4 Oct); github.com/payward/kwal-skill; the organisers' merchant sheet; laeria.ai file locations from the handover; news coverage of Target's terms (Business Insider, Newsweek), the PYMNTS merchant survey, Amex ACE and Agent Purchase Protection, Ant International AgentSafePay (fintechspecs.com, PYMNTS), Mastercard Verifiable Intent, ERC-8183 explainers, MAS SAFR coverage, and coverage of TypeSafe AI's Jev (InfoQ, BenchLM, Lindy, FreeAPIHub) (searched 9 Oct 2026).</p>
+  <p>Sources: Reap × 65labs handover v3; the event microsite (read 9 Oct 2026); docs.reap.global changelog (nothing newer than 4 Oct); github.com/payward/kwal-skill; the organisers' merchant sheet; laeria.ai file locations from the handover; news coverage of Target's terms (Business Insider, Newsweek), the PYMNTS merchant survey, Amex ACE and Agent Purchase Protection, Ant International AgentSafePay (fintechspecs.com, PYMNTS), Mastercard Verifiable Intent, ERC-8183 explainers, MAS SAFR coverage, the ERC-8004 spec (eips.ethereum.org/EIPS/eip-8004) and reference contracts (github.com/erc-8004/erc-8004-contracts), and the ERC-8004 Sybil study (arXiv 2606.26028) (searched 9 Oct 2026). The Ink Sepolia check: <code>eth_getCode</code> on the registry addresses used on other test networks returned empty.</p>
   <p>Ana and the agent maker are example people. Numbers marked assumption haven't been measured.</p>
 </footer>
 
