@@ -7,5 +7,6 @@ evm_version = "cancun"
 optimizer = true
 optimizer_runs = 200
 via_ir = true  # PurchaseRecorded carries six strings; legacy codegen runs out of stack
+fs_permissions = [{ access = "read", path = "../deployments" }, { access = "read", path = "./test/fixtures" }]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
