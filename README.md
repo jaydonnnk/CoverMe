@@ -29,7 +29,16 @@ the purchase.
 ## Demo
 
 The demo includes two shopping agents with different reputations and fee models.
-It supports three presentation flows:
+Tonight's recording uses `PAYMENTS_MODE=fake`. Say "simulated payments" once on
+camera. The interface keeps the mode visible and labels every mock transaction.
+
+The pitch starts with the consumer problem summarized in
+[`COVER_PLAN.html`](COVER_PLAN.html): Target's terms treat an AI agent purchase as
+authorized by the shopper, while a September 2026 PYMNTS survey found that 93% of
+merchants wanted the agent provider to carry losses from wrong purchases and only
+28% allowed agents to buy their full product range.
+
+The recording covers three flows:
 
 - A successful keyboard purchase
 - A purchase refused before payment because it breaks the buyer's limits
@@ -38,6 +47,70 @@ It supports three presentation flows:
 
 Simulation, replay and live testnet activity are labelled in the interface. Mock
 transaction evidence is never presented as an onchain transaction.
+
+### Pre-flight
+
+Run this checklist five minutes before recording:
+
+- [ ] Start FastAPI in simulation mode:
+
+  ```sh
+  PAYMENTS_MODE=fake .venv/bin/uvicorn service.main:app --port 8000
+  curl http://localhost:8000/health
+  ```
+
+  The response should include `"mode":"fake"`.
+
+- [ ] Start the app with `npm --prefix app run dev` and open
+  [http://localhost:3000](http://localhost:3000) at 1080p.
+- [ ] Confirm the mode badge says simulation and the ledger says Connected.
+- [ ] Press **Reset rehearsal**. The provider balances, fees and agent scores
+  should return to their starting values.
+- [ ] Open the Checkpoint explorer link from the deployment table below.
+- [ ] Set the recorder to 1080p, hide notifications and keep the refund timer visible.
+
+### Three-minute run
+
+| Time | Show | Say |
+|---|---|---|
+| 0:00 to 0:20 | Target's terms and the 93% / 28% figures | "When the agent gets it wrong, the shopper pays." |
+| 0:20 to 0:45 | Compare Atlas and Scout, hire Atlas, then show its fee and collateral | "The provider backs its agent with a deposit. Ana chooses based on record, price and coverage." |
+| 0:45 to 1:05 | Set Ana's $100 item limit, $150 monthly limit, shops, address and end date | "Ana sets her limits once." |
+| 1:05 to 1:30 | Ask for the Keychron B40 and approve the displayed request | "She signs what she asked for, including the agent and total." |
+| 1:30 to 1:50 | Run Today's deal and show the refusal | "A prompt injection tries to spend $6,599 at a new shop and address. The request is refused before money moves." |
+| 1:50 to 2:35 | Arm the failure rehearsal, request the black PowerBug, approve it and press Wrong item after confirmation | "She asked for black. The agent recorded White/Dune. One claim refunds the approved total from the provider's deposit." |
+| 2:35 to 3:00 | Show the refund, provider loss, new score and explorer tabs | "Limits stop the money. The bond fixes covered mistakes. The terms and deposit are public." |
+
+The success ledger should progress through `checked`, `released`, `fee_taken`,
+`funded`, `paid` and `confirmed`. The refusal shows amount, shop and address with
+no payment events. The mismatch path adds `claimed`, `refunded` and
+`score_written`.
+
+### Onchain proof
+
+Checkpoint, Bond and the ERC-8004 registries are deployed on Ink Sepolia. The
+contract suite covers release, protection fees, mismatch refunds, matching-claim
+rejection, score updates and the `releaseApproved` path for buyer-approved
+uncovered purchases:
+
+- [`contracts/test/Checkpoint.t.sol`](contracts/test/Checkpoint.t.sol)
+- [`contracts/test/Bond.t.sol`](contracts/test/Bond.t.sol)
+- [`contracts/test/Deploy.t.sol`](contracts/test/Deploy.t.sol)
+
+Run `forge test --root contracts` to reproduce those checks locally. During the
+simulation recording, use the explorer links below as public deployment evidence.
+
+### Recording fallbacks
+
+| Problem | Response |
+|---|---|
+| Service is down or the ledger disconnects | Restart FastAPI. The app reconnects automatically. Reset before continuing. |
+| Keychron draft is unexpected | Send the exact shortcut **Buy Keychron** again. |
+| PowerBug has no mismatch | Confirm **Failure armed** is visible, reset and repeat the PowerBug beat. |
+| Claim button is missing | Wait for the `confirmed` ledger event. |
+| Refusal lists extra reasons | Keep the message simple: the request was refused and no money moved. |
+| OpenAI credentials are absent | Use the scripted demo agent shown by the mode label. |
+| A live integration fails during rehearsal | Restart with `PAYMENTS_MODE=fake`, say "simulated payments", and show the deployed contracts in the explorer. |
 
 ## Architecture
 
@@ -111,19 +184,6 @@ available at [http://localhost:8000/docs](http://localhost:8000/docs).
 The default `PAYMENTS_MODE=fake` runs the complete presentation flow without
 moving money. Kwal credentials stay outside the repository at the path set by
 `KWAL_CREDENTIALS`.
-
-## Suggested demo sequence
-
-1. Compare Atlas Shopper and Scout Buyer, then hire one.
-2. Connect the labelled demo account and save the buyer's limits.
-3. Buy the Keychron keyboard and show the successful receipt.
-4. Arm the injected-failure rehearsal.
-5. Request the black PowerBug and authorize the displayed total.
-6. Open the wrong-item claim after the recorded White/Dune purchase.
-7. Show the buyer refund, provider loss, reputation update and merchant recovery
-   status in the receipt and provider panel.
-
-The full sequence can be reset from the browser without restarting either server.
 
 ## Validate
 
