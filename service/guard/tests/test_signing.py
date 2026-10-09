@@ -104,3 +104,12 @@ def test_reads_the_deployed_checkpoint(ana, tmp_path, monkeypatch):
     monkeypatch.setenv("DEPLOYMENTS_FILE", str(path))
     req, sig = signed(ana)
     assert verify_request(req, sig) == ana.address
+
+
+def test_request_digest_is_what_was_signed(ana):
+    from service.guard.signing import request_digest
+
+    req, sig = signed(ana)
+    digest = request_digest(req, verifying_contract=CHECKPOINT)
+    assert Account._recover_hash(bytes.fromhex(digest[2:]), signature=sig) == ana.address
+    assert digest != request_digest(req, verifying_contract=OTHER_CONTRACT)
