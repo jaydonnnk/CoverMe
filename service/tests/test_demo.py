@@ -59,7 +59,7 @@ def test_runner_success_refusal_and_lookup():
             events = [e for e in store.events if e.purchase_id == p.id]
             if "deal" in prompt:
                 assert [e.step for e in events] == ["refused"]
-                assert {"over_request_max", "shop_not_allowed", "wrong_address"} <= set(p.failures)
+                assert p.failures == ["over_request_max", "shop_not_allowed", "wrong_address"]
                 assert "No money moved" in events[0].detail
             else:
                 assert [e.step for e in events] == ["checked", "released", "fee_taken", "funded", "paid", "confirmed"]
