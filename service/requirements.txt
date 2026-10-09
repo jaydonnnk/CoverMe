@@ -3,3 +3,4 @@ starlette==1.7.0
 uvicorn==0.54.0
 python-dotenv==1.2.4
 eth-account==0.14.0
+openai>=2.11.0,<3
