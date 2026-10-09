@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-10-09T11:49:07+00:00",
+  "method": "POST",
+  "path": "/kwal/participant/v1/products/prd_f7a97bee04054306b5b88918e197888c/variant",
+  "request": {
+    "optionIds": [
+      "eyJuIjoiU2l6ZSIsImwiOiIxOCBTZXQifQ"
+    ]
+  },
+  "response": {
+    "variantId": "var_d548c66e266b4342aee516f4ece88f71",
+    "title": "18 Set",
+    "price": {
+      "minorUnits": "63",
+      "currency": "USD",
+      "decimals": 1
+    },
+    "purchasable": true
+  },
+  "error": null
+}

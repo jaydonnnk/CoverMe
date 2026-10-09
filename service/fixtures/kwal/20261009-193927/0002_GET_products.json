@@ -1,0 +1,61 @@
+{
+  "recorded_at": "2026-10-09T11:40:01+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/products?query=HMX+Snowflake&limit=5",
+  "request": null,
+  "response": {
+    "products": [
+      {
+        "productId": "prd_f8e528db7e2b40408ec8a36903de1ef6",
+        "title": "HMX Snowflake Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "63",
+          "currency": "USD",
+          "decimals": 1
+        }
+      },
+      {
+        "productId": "prd_9b92d11aa65c4b8082b1b900a09720d3",
+        "title": "Gateron Ink Switches V2",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "1296",
+          "currency": "USD",
+          "decimals": 2
+        }
+      },
+      {
+        "productId": "prd_39e066bfd5f647fdbcfe46e45fe23877",
+        "title": "HMX Saru V2 Tactile Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "63",
+          "currency": "USD",
+          "decimals": 1
+        }
+      },
+      {
+        "productId": "prd_f7da776d75a54ce5a8ab082c5a9bfd2c",
+        "title": "HMX Retro R Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "684",
+          "currency": "USD",
+          "decimals": 2
+        }
+      },
+      {
+        "productId": "prd_d9935f5382334306a2f908b0ca5829d3",
+        "title": "HMX Rosa Centifolia Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "63",
+          "currency": "USD",
+          "decimals": 1
+        }
+      }
+    ]
+  },
+  "error": null
+}

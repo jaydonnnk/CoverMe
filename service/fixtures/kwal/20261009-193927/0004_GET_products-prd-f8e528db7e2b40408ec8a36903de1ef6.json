@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-10-09T11:40:03+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/products/prd_f8e528db7e2b40408ec8a36903de1ef6",
+  "request": null,
+  "response": {
+    "product": {
+      "productId": "prd_f8e528db7e2b40408ec8a36903de1ef6",
+      "title": "HMX Snowflake Linear Switches",
+      "merchant": "Divinikey",
+      "price": {
+        "minorUnits": "63",
+        "currency": "USD",
+        "decimals": 1
+      }
+    },
+    "options": [
+      {
+        "name": "Size",
+        "values": [
+          {
+            "optionId": "eyJuIjoiU2l6ZSIsImwiOiIxOCBTZXQifQ",
+            "label": "18 Set"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}
