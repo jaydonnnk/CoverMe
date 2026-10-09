@@ -12,7 +12,16 @@ from .rules import (
     purchase_cents,
     to_bitmask,
 )
-from .signing import BadSignature, SigningConfigError, request_digest, sign_request, verify_request
+from .signing import (
+    BadSignature,
+    SigningConfigError,
+    make_approval,
+    request_digest,
+    sign_approval,
+    sign_request,
+    verify_approval,
+    verify_request,
+)
 
 __all__ = [
     "RULES",
@@ -22,11 +31,14 @@ __all__ = [
     "SigningConfigError",
     "check_rules",
     "from_bitmask",
+    "make_approval",
     "needs_approval",
     "purchase_cents",
     "request_digest",
+    "sign_approval",
     "sign_request",
     "spend_ceiling_cents",
     "to_bitmask",
+    "verify_approval",
     "verify_request",
 ]
