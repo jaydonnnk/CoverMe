@@ -1,0 +1,85 @@
+{
+  "recorded_at": "2026-10-09T11:34:09+00:00",
+  "method": "POST",
+  "path": "/kwal/participant/v1/quotes",
+  "request": {
+    "email": "<redacted>",
+    "lines": [
+      {
+        "variantId": "var_1a838a2d6fcf45a7ad28fadb590daa5a",
+        "quantity": 1
+      }
+    ],
+    "shippingAddress": {
+      "firstName": "<redacted>",
+      "lastName": "<redacted>",
+      "phone": "<redacted>",
+      "line1": "<redacted>",
+      "city": "<redacted>",
+      "region": "CA",
+      "postalCode": "<redacted>",
+      "country": "US"
+    }
+  },
+  "response": {
+    "quoteId": "594bc246-7f13-44bc-b495-02d276122689",
+    "lines": [
+      {
+        "variantId": "var_1a838a2d6fcf45a7ad28fadb590daa5a",
+        "quantity": 1
+      }
+    ],
+    "shippingOptions": [
+      {
+        "shippingOptionId": "ship_0",
+        "label": "Ground Advantage",
+        "price": {
+          "minorUnits": "818",
+          "currency": "USD",
+          "decimals": 2
+        }
+      },
+      {
+        "shippingOptionId": "ship_1",
+        "label": "UPS\u00ae Ground",
+        "price": {
+          "minorUnits": "909",
+          "currency": "USD",
+          "decimals": 2
+        }
+      },
+      {
+        "shippingOptionId": "ship_2",
+        "label": "Priority Mail",
+        "price": {
+          "minorUnits": "1147",
+          "currency": "USD",
+          "decimals": 2
+        }
+      }
+    ],
+    "selectedShippingOptionId": "ship_0",
+    "subtotal": {
+      "minorUnits": "63",
+      "currency": "USD",
+      "decimals": 1
+    },
+    "shipping": {
+      "minorUnits": "818",
+      "currency": "USD",
+      "decimals": 2
+    },
+    "tax": {
+      "minorUnits": "125",
+      "currency": "USD",
+      "decimals": 2
+    },
+    "total": {
+      "minorUnits": "1573",
+      "currency": "USD",
+      "decimals": 2
+    },
+    "expiresAtUnixSeconds": "1791545912"
+  },
+  "error": null
+}

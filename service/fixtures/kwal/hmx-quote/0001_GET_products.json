@@ -1,0 +1,41 @@
+{
+  "recorded_at": "2026-10-09T11:33:58+00:00",
+  "method": "GET",
+  "path": "/kwal/participant/v1/products?query=HMX+Snowflake&limit=3",
+  "request": null,
+  "response": {
+    "products": [
+      {
+        "productId": "prd_3cd288c4e7d24d718f7f5514263faf35",
+        "title": "HMX Snowflake Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "63",
+          "currency": "USD",
+          "decimals": 1
+        }
+      },
+      {
+        "productId": "prd_f8a51c05308d43d18932658693c26643",
+        "title": "Gateron Ink Switches V2",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "1296",
+          "currency": "USD",
+          "decimals": 2
+        }
+      },
+      {
+        "productId": "prd_b528f211447f42669a2d188193934fa7",
+        "title": "HMX Retro R Linear Switches",
+        "merchant": "Divinikey",
+        "price": {
+          "minorUnits": "684",
+          "currency": "USD",
+          "decimals": 2
+        }
+      }
+    ]
+  },
+  "error": null
+}
