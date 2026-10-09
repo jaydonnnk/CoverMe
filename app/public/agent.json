@@ -1,5 +1,13 @@
 {
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
   "name": "Cover demo shopping agent",
-  "description": "An agent backed by Cover",
-  "network": "Ink Sepolia"
+  "description": "A shopping agent backed by CoverMe purchase protection.",
+  "network": "Ink Sepolia",
+  "supportedTrust": ["reputation", "crypto-economic"],
+  "registrations": [
+    {
+      "agentRegistry": "eip155:763373:0x5fE095dA5C7Bd3E80E28e59F1e43D250D3e7B620",
+      "agentId": "0"
+    }
+  ]
 }
