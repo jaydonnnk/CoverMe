@@ -4,6 +4,7 @@ again at `release`."""
 from .ceiling import spend_ceiling_cents
 from .rules import (
     RULES,
+    WORDS,
     Limits,
     check_rules,
     from_bitmask,
@@ -11,10 +12,11 @@ from .rules import (
     purchase_cents,
     to_bitmask,
 )
-from .signing import BadSignature, SigningConfigError, sign_request, verify_request
+from .signing import BadSignature, SigningConfigError, request_digest, sign_request, verify_request
 
 __all__ = [
     "RULES",
+    "WORDS",
     "BadSignature",
     "Limits",
     "SigningConfigError",
@@ -22,6 +24,7 @@ __all__ = [
     "from_bitmask",
     "needs_approval",
     "purchase_cents",
+    "request_digest",
     "sign_request",
     "spend_ceiling_cents",
     "to_bitmask",

@@ -168,3 +168,13 @@ def sign_request(request: dict, private_key: str, *, verifying_contract: str | N
     contract = verifying_contract or checkpoint_address()
     signed = Account.sign_message(signable(request, contract), private_key=private_key)
     return "0x" + signed.signature.hex().removeprefix("0x")
+
+
+def request_digest(request: dict, *, verifying_contract: str | None = None) -> str:
+    """The EIP-712 digest Ana signs (`Checkpoint.hashRequest`): the service's
+    `request_id` for events before `release` gives a purchase id (J1 item 6),
+    and the `requestDigest` of an A5 `Approval`."""
+    from eth_utils import keccak
+
+    msg = signable(request, verifying_contract or checkpoint_address())
+    return "0x" + keccak(b"\x19" + msg.version + msg.header + msg.body).hex()
