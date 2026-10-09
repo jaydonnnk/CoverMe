@@ -52,7 +52,7 @@ After merging, start the next task from updated main rather than your old branch
   section. Top-level network metadata is shared. Keep `agentId` as a decimal
   string once known, to avoid JavaScript integer precision loss.
 - `app/package.json` and `app/package-lock.json` belong to Francesco; keep them
-  together in dependency PRs and use npm only. Jaydon coordinates wallet dependency
+  together in dependency PRs and use Node 22 / npm 10 only. Jaydon coordinates wallet dependency
   additions before porting `wallet.ts`. Service requirements are coordinated if
   the payment port needs additional packages.
 - Submodules are pinned commits. Run `git submodule update --init --recursive`

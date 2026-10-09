@@ -22,13 +22,14 @@ implementation sequence and [COVER_PLAN.html](COVER_PLAN.html) for the product.
 
 ## Fresh clone
 
-Requirements: Node.js 22.13+ (see `.nvmrc`), npm, Python 3.10+ (3.12 recommended),
+Requirements: Node.js 22 (22.13+, see `.nvmrc`), npm 10, Python 3.10+ (3.12 recommended),
 Git and Foundry. macOS, Linux and WSL can use the commands below.
 
 ```sh
 git clone --recurse-submodules https://github.com/jaydonnnk/CoverMe.git
 cd CoverMe
 # Existing clones: git submodule update --init --recursive
+# If you use nvm: nvm use
 cp .env.example .env
 npm --prefix app ci
 cp app/.env.example app/.env.local

@@ -3,6 +3,7 @@
 Next.js App Router, TypeScript, Tailwind and ESLint, generated with
 `create-next-app@latest`. npm is the only package manager; commit changes to
 `package.json` and `package-lock.json` together.
+Use Node 22 and npm 10 (`packageManager` records the tested npm version).
 
 From this folder:
 
