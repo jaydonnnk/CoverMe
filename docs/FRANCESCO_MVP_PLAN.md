@@ -23,9 +23,10 @@ metrics, receipts, SSE and reset controls. Its reported validation was 63 Python
 tests plus frontend checks and a twice-through browser rehearsal. Revalidate
 the current checkout; that report is not proof of live integration.
 
-Remaining product work: agent selection, demo business onboarding/endpoint
-configuration, configurable agent service fees, and clearer coverage terms.
-Remaining live work: F3 agent registration, funded wallets, Jaydon's covered
+The presentation simulation now includes agent selection, demo business setup,
+configurable flat/percentage service fees, frozen pricing, explicit failure
+injection, full approved-total refund, per-provider collateral/reputation and
+merchant-recovery status. Remaining live work: funded wallets, Jaydon's covered
 payment/chain and browser-wallet adapters, J6 deployments, agreed getters and
 claim-event correlation. The Kwal catalogue/quote/checkout client is now present;
 do not report all of `service.payments` as missing.
@@ -241,8 +242,11 @@ Reputation implementation: `0xbBCc07cbd9BE6d7a33DD212B5113721fba44AA1C`.
 Reputation points to the Identity proxy. Seven deployment/upgrade transactions
 all succeeded, and the deployment file records proxy addresses only. This is
 acceptable for the presentation testnet; production ownership needs a multisig
-or governance decision. Agent registration remains pending because it must be
-sent by the intended Maker owner, not the registry admin.
+or governance decision. Agent `0` was registered at the public main-branch
+metadata URL by the funded deployer and immediately transferred to Maker because
+its signer was unavailable locally. `ownerOf(0)` now returns
+`0x5DaF7ba2C06d5c9511a67e158F590c11ed3B1794`. Transfer correctly cleared the
+optional `agentWallet` metadata, which remains unset until Maker proves control.
 
 Reported balances at the last check (stale until rechecked): Kwal owner
 0.01 ETH / 0 USDC; vault 60 USDC; Maker empty with 20 faucet USDC expected;
@@ -612,15 +616,15 @@ Files:
 - `deployments/ink-sepolia.json`
 - `app/public/agent.json` for the public registration metadata
 
-Current deployment status: registry deployment and ABI recording are complete.
-Resume at agent metadata/registration after obtaining the intended Maker signer.
+Current deployment status: registry deployment, metadata, agent registration,
+Maker ownership and deployment-registry recording are complete. The optional
+agent-wallet metadata proof remains follow-up work.
 
 Steps:
 
-1. Registry deployment used the funded Ana/Kwal-owner test signer. Before agent
-   registration, verify Maker is `0x5DaF7ba2C06d5c9511a67e158F590c11ed3B1794`,
-   its signer matches, and it has test ETH. Access to a key/address alone is not
-   funding. Never print or commit the key.
+1. Registry deployment and initial registration used the funded Ana/Kwal-owner
+   test signer. Maker ownership was established by ERC-721 transfer. Before any
+   Maker-only follow-up, verify its signer and test ETH. Never print or commit keys.
 2. Reuse the existing reference project's Hardhat toolchain and compile result;
    install/compile if needed. Keep the reference source unchanged.
 3. Deploy only the Identity and Reputation registries to Ink Sepolia using the
@@ -634,14 +638,15 @@ Steps:
    - description: `An agent backed by Cover`
    - network: `Ink Sepolia`
    - Bond address if it is already known, otherwise omit it for the MVP
-6. From the intended Maker wallet, call `register(agentURI)`. Do not register from
-   the Ana/deployer/admin wallet merely because it funded registry deployment.
+6. Intended route: Maker calls `register(agentURI)`. **Completed with a documented
+   deviation:** the funded deployer registered agent `0` and transferred it to
+   Maker because the Maker signer was unavailable. Ownership is correct;
+   `agentWallet` metadata was cleared by transfer and is not presented as set.
 7. Read the `Registered` event and record the agent ID.
 8. Update only `deployments/ink-sepolia.json -> registries`:
    - Identity `{ address, abi }`
    - Reputation `{ address, abi }`
-   - `agentId` as a decimal string. Addresses/ABIs are complete; `agentId` remains
-     null until step 6 succeeds.
+   - `agentId` as a decimal string. **Complete:** `agentId` is `"0"`.
 9. Push that change so Jaydon can deploy Bond and Checkpoint against it.
 
 One live registered agent is enough for this demo. The second comparison listing
@@ -1516,28 +1521,28 @@ as read-only.
 
 ### Presentation simulation complete
 
-- [ ] Two agent listings show provider, reputation/count, flat/percentage service
+- [x] Two agent listings show provider, reputation/count, flat/percentage service
       fee, coverage limit and provenance; no-history agents are **Unrated**.
-- [ ] Buyer hires an agent before drafting; identity and fee snapshot persist
+- [x] Buyer hires an agent before drafting; identity and fee snapshot persist
       through authorization, payment and receipt.
-- [ ] Demo business setup shows simulated KYB, endpoint status, chosen fee and
+- [x] Demo business setup shows simulated KYB, endpoint status, chosen fee and
       collateral. Real endpoint connection is demonstrated only if supplied;
       otherwise **Scripted demo agent** remains explicit.
-- [ ] Item/shipping/tax/buyer-paid fees/total/refundable total are reviewed before
+- [x] Item/shipping/tax/buyer-paid fees/total/refundable total are reviewed before
       authorization; maker-paid protection fee is separate.
-- [ ] Buyer limits and labelled simulated authorization work in the browser.
-- [ ] Keychron completes; a normal known PowerBug mismatch is refused.
-- [ ] Explicit injected-failure PowerBug records black requested/White-Dune bought.
-- [ ] Wrong-item claim refunds the full simulated approved buyer total once,
+- [x] Buyer limits and labelled simulated authorization work in the browser.
+- [x] Keychron completes; a normal known PowerBug mismatch is refused.
+- [x] Explicit injected-failure PowerBug records black requested/White-Dune bought.
+- [x] Wrong-item claim refunds the full simulated approved buyer total once,
       updates the correct provider deposit and final reputation/count, and shows
       **Merchant recovery pending** without claiming vendor recovery.
-- [ ] Reserve/headroom refusal and the existing three-rule GMKtec refusal pass.
-- [ ] Receipt shows actual simulated refund amount and measured time; no fake
+- [x] Reserve/headroom refusal and the existing three-rule GMKtec refusal pass.
+- [x] Receipt shows actual simulated refund amount and measured time; no fake
       hashes are linked to an explorer or labelled as onchain.
-- [ ] Simulation provenance is visible for KYB, identity/history, signing and money.
-- [ ] Python tests and app lint/typecheck/build pass; browser smoke passes.
-- [ ] Full revised main sequence passes twice after reset.
-- [ ] No Jaydon-owned file is edited by Francesco; synced upstream work is kept
+- [x] Simulation provenance is visible for KYB, identity/history, signing and money.
+- [x] Python tests and app lint/typecheck/build pass; browser smoke passes.
+- [x] Full revised main sequence passes twice after reset.
+- [x] No Jaydon-owned file is edited by Francesco; synced upstream work is kept
       intact. Validated new work is submitted as a follow-up PR from the Francesco
       branch (PR #1 is already merged).
 
@@ -1545,7 +1550,7 @@ as read-only.
 
 - [ ] F2 decisions cover two Ana identities, fee authorization/settlement,
       refundable amount, getters, claim correlation and failure-rehearsal scope.
-- [ ] Registry addresses/ABIs and real agent ID are in `registries`; ownerOf
+- [x] Registry addresses/ABIs and real agent ID are in `registries`; ownerOf
       returns the supplied Maker, with nonempty code on the intended network.
 - [ ] Jaydon's Checkpoint/Bond/USDC addresses/ABIs are verified in `cover`.
 - [ ] Wallets have required gas, buyer funds and adequate maker collateral;
