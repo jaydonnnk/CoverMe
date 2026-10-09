@@ -6,9 +6,10 @@ from fastapi.testclient import TestClient
 
 from service import fake_payments
 from service.agent import chat
+from service.catalogue import CATALOGUE
 from service.demo import DemoLimits, DemoState, simulated_signature
 from service.main import create_app, frame
-from service.models import Event, SignedPurchaseRequest
+from service.models import Event, PricingSnapshot, SignedPurchaseRequest
 from service.runner import Adapter, run_purchase
 from service.store import Store
 
@@ -54,17 +55,25 @@ def test_runner_success_refusal_and_lookup():
         adapter = Adapter("fake", demo)
         for prompt in ("Get me the Keychron B40", "Show me today's deal", "Buy the black PowerBug 25W, under $60"):
             draft = (await chat(prompt, True)).request_draft
-            p = store.add_purchase(draft, True)
-            await run_purchase(p.id, SignedPurchaseRequest(request=draft, signature=simulated_signature(draft.model_dump())), store, adapter)
+            row = next(value for value in CATALOGUE.values() if value["item"] == draft.item)
+            quote = PricingSnapshot(quote_id=f"quote-{prompt}", agent_listing_id="atlas", item=draft.item, shop=draft.shop, fee_type="flat", fee_value=350, item_subtotal_cents=row["cents"],
+                                    service_fee_cents=350, buyer_total_cents=5349, refundable_usdc=53_490_000)
+            store.save_quote(quote)
+            p = store.add_purchase(draft, True, quote, provider_name="Northstar Commerce", agent_name="Atlas Shopper",
+                                   fee_type="flat", fee_value=350)
+            await run_purchase(p.id, SignedPurchaseRequest(request=draft, signature=simulated_signature(draft.model_dump()), quote_id=quote.quote_id), store, adapter)
             events = [e for e in store.events if e.purchase_id == p.id]
             if "deal" in prompt:
                 assert [e.step for e in events] == ["refused"]
                 assert p.failures == ["over_request_max", "shop_not_allowed", "wrong_address"]
                 assert "No money moved" in events[0].detail
+            elif "PowerBug" in prompt:
+                assert [e.step for e in events] == ["refused"]
+                assert p.failures == ["variant_mismatch"]
             else:
                 assert [e.step for e in events] == ["checked", "released", "fee_taken", "funded", "paid", "confirmed"]
                 assert store.get_purchase(p.id).kwal_payment_id.startswith("kwal_mock_")
-                assert p.bought.colour == ("white/dune" if "PowerBug" in prompt else "deep black")
+                assert p.bought.colour == "deep black"
     asyncio.run(check())
 
 
@@ -83,10 +92,13 @@ def test_http_sequence_twice():
             assert client.post("/demo/reset").status_code == 200
             assert client.post("/demo/limits", json=DemoLimits().model_dump()).status_code == 200
             for prompt, expected in (("Get me the Keychron B40", "confirmed"), ("Show me today's deal", "refused"), ("Buy the black PowerBug 25W, under $60", "confirmed")):
-                response = client.post("/chat", json={"message": prompt})
+                if "PowerBug" in prompt:
+                    assert client.post("/demo/failure-mode", json={"enabled": True}).status_code == 200
+                response = client.post("/chat", json={"message": prompt, "agent_listing_id": "atlas"})
                 assert response.status_code == 200
-                draft = response.json()["request_draft"]
-                response = client.post("/requests", json={"request": draft, "signature": simulated_signature(draft)})
+                payload = response.json()
+                draft = payload["request_draft"]
+                response = client.post("/requests", json={"request": draft, "signature": simulated_signature(draft), "quote_id": payload["quote_id"]})
                 assert response.status_code == 200
                 purchase_id = response.json()["purchase_id"]
                 p = wait_for(client, purchase_id, expected)
@@ -94,7 +106,9 @@ def test_http_sequence_twice():
             assert client.post(f"/demo/claims/{purchase_id}").status_code == 200
             p = wait_for(client, purchase_id, "refunded")
             assert p["refund_tx_hash"].startswith("0xmock_")
-            assert client.get("/demo/maker").json()["score_average"] == 83
+            assert p["refund_amount_usdc"] == p["refundable_usdc"]
+            assert p["merchant_recovery_status"] == "pending"
+            assert client.get("/demo/maker?agent_listing_id=atlas").json()["score_average"] == 95
         assert client.get("/purchases/99999").status_code == 404
 
 
@@ -102,14 +116,53 @@ def test_bad_simulation_signature_moves_nothing():
     async def check():
         store, demo = Store(), DemoState()
         draft = (await chat("Get me the Keychron B40", True)).request_draft
-        p = store.add_purchase(draft, True)
-        await run_purchase(p.id, SignedPurchaseRequest(request=draft, signature="bad"), store, Adapter("fake", demo))
+        quote = PricingSnapshot(quote_id="bad-signature", agent_listing_id="atlas", item=draft.item, shop=draft.shop, fee_type="flat", fee_value=350, item_subtotal_cents=4999,
+                                service_fee_cents=350, buyer_total_cents=5349, refundable_usdc=53_490_000)
+        store.save_quote(quote)
+        p = store.add_purchase(draft, True, quote)
+        await run_purchase(p.id, SignedPurchaseRequest(request=draft, signature="bad", quote_id=quote.quote_id), store, Adapter("fake", demo))
         assert p.status == "error"
-        assert demo.reserved == 0
+        assert demo.metrics("atlas")["reserved_cover"] == 0
         assert store.events[0].status == "error"
+    asyncio.run(check())
+
+
+def test_insufficient_provider_cover_refuses_before_payment():
+    async def check():
+        store, demo = Store(), DemoState()
+        demo.set_limits(DemoLimits())
+        demo.listing("atlas")["deposit"] = 1_000_000
+        draft = (await chat("Get me the Keychron B40", True)).request_draft
+        quote = PricingSnapshot(quote_id="underfunded", agent_listing_id="atlas", item=draft.item, shop=draft.shop,
+                                fee_type="flat", fee_value=350, item_subtotal_cents=4999,
+                                service_fee_cents=350, buyer_total_cents=5349, refundable_usdc=53_490_000)
+        store.save_quote(quote)
+        p = store.add_purchase(draft, True, quote)
+        await run_purchase(p.id, SignedPurchaseRequest(request=draft, signature=simulated_signature(draft.model_dump()), quote_id=quote.quote_id), store, Adapter("fake", demo))
+        assert p.status == "refused"
+        assert "not_enough_cover" in p.failures
+        assert [event.step for event in store.events] == ["refused"]
+        assert demo.metrics("atlas")["reserved_cover"] == 0
     asyncio.run(check())
 
 
 def test_live_does_not_fall_back_to_simulation():
     with pytest.raises((ModuleNotFoundError, RuntimeError)):
         create_app("live")
+
+
+def test_agent_marketplace_fee_snapshot_and_quote_replay_protection():
+    with TestClient(create_app("fake")) as client:
+        agents = client.get("/agents").json()
+        assert [agent["id"] for agent in agents] == ["atlas", "scout"]
+        assert agents[0]["score_average"] == 96 and agents[0]["score_count"] == 184
+        assert agents[0]["erc8004_agent_id"] == "0"
+        first = client.post("/chat", json={"message": "Get me the Keychron B40", "agent_listing_id": "atlas"}).json()
+        assert first["pricing"]["service_fee_cents"] == 350
+        assert first["pricing"]["buyer_total_cents"] == 5349
+        assert client.post("/demo/providers/atlas", json={"fee_type": "percentage", "fee_value": 100}).status_code == 200
+        assert first["pricing"]["service_fee_cents"] == 350  # frozen quote did not change
+        draft = first["request_draft"]
+        body = {"request": draft, "signature": simulated_signature(draft), "quote_id": first["quote_id"]}
+        assert client.post("/requests", json=body).status_code == 200
+        assert client.post("/requests", json=body).status_code == 409

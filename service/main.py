@@ -1,6 +1,7 @@
 """FastAPI orchestration and a process-local SSE ledger."""
 import asyncio
 import os
+import secrets
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
@@ -9,8 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from service.agent import chat
-from service.demo import ADDRESS_HASH, SHOPPER, DemoLimits, DemoState
-from service.models import ChatRequest, ChatResponse, Event, SignedPurchaseRequest
+from service.catalogue import find_item
+from service.demo import ADDRESS_HASH, SHOPPER, DemoLimits, DemoState, FailureMode, ProviderFeeUpdate
+from service.models import ChatRequest, ChatResponse, Event, PricingSnapshot, SignedPurchaseRequest
 from service.runner import Adapter, run_purchase
 from service.store import Store
 
@@ -63,18 +65,60 @@ def create_app(mode: str | None = None):
                     shopper=SHOPPER if adapter.simulation else os.getenv("ANA_ADDRESS"),
                     address_hash=ADDRESS_HASH if adapter.simulation else os.getenv("ANA_ADDRESS_HASH"),
                     shipping_summary="Demo address · Singapore 018956" if adapter.simulation else "Saved Ana address (server configured)",
-                    live_wallet_available=False)
+                     live_wallet_available=False)
+
+    @app.get("/agents")
+    async def agents():
+        if adapter.simulation:
+            return demo.listings()
+        return []
 
     @app.post("/chat", response_model=ChatResponse)
     async def chat_route(body: ChatRequest):
         try:
-            return await chat(body.message, adapter.simulation)
+            listing = next((item for item in demo.listings() if item.id == body.agent_listing_id), None) if adapter.simulation else None
+            if adapter.simulation and listing is None:
+                raise ValueError("Select an available agent before chatting")
+            result = await chat(body.message, adapter.simulation, listing)
+            if result.request_draft and listing:
+                row = find_item(result.request_draft.item)
+                if row is None:
+                    raise ValueError("The selected item is not in the demo catalogue")
+                if listing.fee_type == "flat":
+                    service_fee = listing.fee_value
+                else:
+                    service_fee = (row["cents"] * listing.fee_value + 5000) // 10000
+                total = row["cents"] + service_fee
+                pricing = PricingSnapshot(
+                    quote_id="demo_" + secrets.token_hex(8), agent_listing_id=listing.id,
+                    item=result.request_draft.item, shop=result.request_draft.shop,
+                    fee_type=listing.fee_type, fee_value=listing.fee_value,
+                    item_subtotal_cents=row["cents"], service_fee_cents=service_fee,
+                    buyer_total_cents=total, refundable_usdc=total * 10000,
+                )
+                store.save_quote(pricing)
+                result = result.model_copy(update={"quote_id": pricing.quote_id, "pricing": pricing})
+            return result
         except Exception as exc:
             raise HTTPException(502, f"Shopping agent unavailable: {exc}") from exc
 
     @app.post("/requests")
     async def requests(body: SignedPurchaseRequest):
-        p = store.add_purchase(body.request, adapter.simulation)
+        quote = store.reserve_quote(body.quote_id) if adapter.simulation else None
+        if adapter.simulation and quote is None:
+            raise HTTPException(409, "Pricing snapshot is missing, expired or already used")
+        listing = demo.listing(quote.agent_listing_id) if quote else None
+        expected_agent = listing["erc8004_agent_id"] or "2" if listing else body.request.agentId
+        if listing and body.request.agentId != expected_agent:
+            raise HTTPException(409, "Selected agent does not match the signed request")
+        p = store.add_purchase(
+            body.request, adapter.simulation, quote,
+            provider_name=listing["provider_name"] if listing else None,
+            agent_name=listing["agent_name"] if listing else None,
+            fee_type=quote.fee_type if quote else None,
+            fee_value=quote.fee_value if quote else None,
+            failure_injected=demo.failure_injection if adapter.simulation else False,
+        )
         start(run_purchase(p.id, body, store, adapter))
         return {"purchase_id": p.id}
 
@@ -117,9 +161,27 @@ def create_app(mode: str | None = None):
         return {"status": "confirmed", "simulation": True}
 
     @app.get("/demo/maker")
-    async def maker():
+    async def maker(agent_listing_id: str = "atlas"):
         mock_only()
-        return demo.metrics()
+        try:
+            return demo.metrics(agent_listing_id)
+        except KeyError as exc:
+            raise HTTPException(404, str(exc)) from exc
+
+    @app.post("/demo/providers/{agent_listing_id}")
+    async def provider_fee(agent_listing_id: str, values: ProviderFeeUpdate):
+        mock_only()
+        try:
+            demo.set_fee(agent_listing_id, values)
+            return demo.metrics(agent_listing_id)
+        except KeyError as exc:
+            raise HTTPException(404, str(exc)) from exc
+
+    @app.post("/demo/failure-mode")
+    async def failure_mode(values: FailureMode):
+        mock_only()
+        demo.failure_injection = values.enabled
+        return {"enabled": demo.failure_injection, "simulation": True}
 
     async def claim(p):
         try:
@@ -131,15 +193,22 @@ def create_app(mode: str | None = None):
             p.status = "refunded" if mismatch else "rejected"
             tx = f"0xmock_{p.id}_{p.status}"
             p.tx_hash = tx
-            demo.reserved -= p.charge_usdc
+            agent = demo.listing(p.agent_listing_id or "atlas")
+            refund = p.refundable_usdc or p.charge_usdc
+            agent["reserved"] -= refund
             if mismatch:
-                demo.deposit -= p.charge_usdc
+                agent["deposit"] -= refund
+                agent["provider_loss"] += refund
+                agent["service_earnings"] = max(0, agent["service_earnings"] - p.service_fee_cents * 10000)
+                agent["merchant_recovery_status"] = "pending"
+                p.refund_amount_usdc = refund
+                p.merchant_recovery_status = "pending"
                 p.refund_tx_hash = tx
-            demo.score_total += 0 if mismatch else 100
-            demo.score_count += 1
+            agent["score_total"] += 0 if mismatch else 100
+            agent["score_count"] += 1
             store.append_event(Event(purchase_id=p.id, step=p.status, tx_hash=tx,
-                                     detail="Simulated refund from maker deposit" if mismatch else "Simulated claim rejected: attributes match"))
-            store.append_event(Event(purchase_id=p.id, step="score_written", detail=f"Simulated score updated to {demo.metrics()['score_average']}"))
+                                     detail="Simulated full approved-total refund from provider deposit" if mismatch else "Simulated claim rejected: attributes match"))
+            store.append_event(Event(purchase_id=p.id, step="score_written", detail=f"Simulated score updated to {demo.metrics(p.agent_listing_id or 'atlas')['score_average']}"))
         finally:
             demo.claiming.discard(p.id)
 

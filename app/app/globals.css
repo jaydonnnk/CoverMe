@@ -18,7 +18,7 @@
 * { box-sizing: border-box; }
 html { color-scheme: light; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body), sans-serif; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 a { color: inherit; text-decoration: none; }
 a:focus-visible, button:focus-visible, input:focus-visible, .ledger-scroll:focus-visible { outline: 3px solid #407e5c; outline-offset: 3px; }
 button { border: 1px solid var(--ink); border-radius: var(--radius); background: var(--ink); color: var(--surface); min-height: 42px; padding: 9px 15px; cursor: pointer; font-weight: 700; transition: transform 140ms ease, background-color 140ms ease, color 140ms ease; white-space: nowrap; }
@@ -27,7 +27,7 @@ button:active:not(:disabled) { transform: translateY(1px); }
 button:disabled { cursor: not-allowed; opacity: .48; }
 button.secondary { background: transparent; color: var(--ink); }
 button.secondary:hover:not(:disabled) { background: var(--green-soft); }
-input { width: 100%; min-height: 42px; margin-top: 7px; padding: 9px 11px; border: 1px solid #8fa094; border-radius: var(--radius); background: var(--surface); color: var(--ink); }
+input, select { width: 100%; min-height: 42px; margin-top: 7px; padding: 9px 11px; border: 1px solid #8fa094; border-radius: var(--radius); background: var(--surface); color: var(--ink); }
 label, .field-label, legend { font-size: 13px; font-weight: 700; }
 fieldset { border: 0; padding: 0; margin: 18px 0; }
 legend { margin-bottom: 9px; }
@@ -69,6 +69,16 @@ nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
 .badge.warning { color: var(--amber); background: var(--amber-soft); }
 .badge.danger { color: var(--red); background: var(--red-soft); }
 .workspace-grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(310px, .72fr); border-bottom: 1px solid var(--line); }
+.marketplace { display: grid; grid-template-columns: minmax(220px, .6fr) minmax(0, 1.4fr); gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.marketplace-copy h2 { font-size: 28px; margin: 4px 0 8px; }
+.agent-listings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.agent-listing { padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.agent-listing.selected { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+.agent-listing h3, .agent-listing p { margin-bottom: 3px; }
+.listing-facts { display: grid; grid-template-columns: 1fr 1fr; margin: 15px 0; }
+.listing-facts div { padding: 8px 8px 8px 0; border-top: 1px solid var(--line); }
+.listing-facts dt { color: var(--muted); font-size: 10px; }
+.listing-facts dd { margin: 3px 0 0; font-size: 12px; }
 .workspace-grid.single-panel { grid-template-columns: minmax(0, 1fr); }
 .ana-panel, .maker-panel { min-width: 0; padding: 23px 24px 25px 0; }
 .maker-panel { border-left: 1px solid var(--line); padding-left: 24px; padding-right: 0; }
@@ -90,6 +100,10 @@ nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
 .request-details div { border-top: 1px solid #c8a65f; padding-top: 8px; }
 .request-details dt, .metrics dt { color: var(--muted); font-size: 11px; }
 .request-details dd { margin: 4px 0 13px; overflow-wrap: anywhere; }
+.cost-breakdown { margin: 8px 0 15px; padding: 12px; border-radius: var(--radius); background: rgba(251, 250, 244, .72); }
+.cost-breakdown > div { display: flex; justify-content: space-between; gap: 16px; padding: 5px 0; }
+.cost-breakdown .total { border-top: 1px solid #c8a65f; margin-top: 5px; padding-top: 10px; }
+.cost-breakdown p { margin: 8px 0 0; }
 .progress-steps { display: grid; grid-template-columns: repeat(5, 1fr); list-style: none; padding: 0; margin: 16px 0; }
 .progress-steps li { position: relative; border-top: 3px solid var(--line); padding-top: 9px; color: var(--muted); font-size: 11px; text-transform: capitalize; }
 .progress-steps li.complete { border-color: var(--green); color: var(--green); font-weight: 700; }
@@ -114,6 +128,11 @@ nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
 .skeleton { display: inline-block; width: 95px; height: 11px; background: #d8ddd4; border-radius: 4px; animation: pulse 1.3s ease-in-out infinite alternate; }
 .metric-changed { animation: metric-change 1.2s ease-out; }
 .cover-note { margin: 22px 0; padding: 16px; color: var(--surface); background: var(--ink); border-radius: var(--radius); }
+.provider-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.provider-controls button { grid-column: 1 / -1; }
+.failure-control { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin: 16px 0; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.failure-control.active { border-color: var(--amber); background: var(--amber-soft); }
+.failure-control p { margin: 4px 0 0; }
 .cover-note p:last-child { margin-bottom: 0; color: #b9cabe; }
 .ledger { padding-top: 22px; }
 .ledger-scroll { max-height: 250px; overflow: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
@@ -127,6 +146,7 @@ td { padding: 9px 10px; border-top: 1px solid var(--line); vertical-align: top; 
 @keyframes metric-change { 0% { transform: translateY(2px); color: var(--green); } 100% { transform: translateY(0); } }
 
 @media (max-width: 850px) {
+  .marketplace { grid-template-columns: 1fr; }
   .workspace-grid { grid-template-columns: 1fr; }
   .maker-panel { border-left: 0; border-top: 1px solid var(--line); padding: 24px 0; }
   .ana-panel { padding-right: 0; }
@@ -138,7 +158,8 @@ td { padding: 9px 10px; border-top: 1px solid var(--line); vertical-align: top; 
   .network-label { width: 100%; margin: 0; }
   .workspace-heading { align-items: flex-start; flex-direction: column; }
   .mode-group { text-align: left; }
-  .form-grid, .receipt-items { grid-template-columns: 1fr; }
+  .form-grid, .receipt-items, .agent-listings, .provider-controls { grid-template-columns: 1fr; }
+  .failure-control { grid-template-columns: 1fr; }
   .chat-input { align-items: stretch; flex-direction: column; }
   .progress-steps { overflow-x: auto; grid-template-columns: repeat(5, minmax(80px, 1fr)); }
   .ledger-scroll { max-height: 330px; }

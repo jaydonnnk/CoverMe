@@ -14,14 +14,19 @@ export function Receipt({ purchase: p, elapsed, claimBusy, onClaim }: { purchase
   if (!p.bought || !["confirmed", "claimed", "refunded", "rejected"].includes(p.status)) return null;
   const mismatch = p.asked.colour && p.asked.colour !== p.bought.colour;
   return <section className={`receipt ${p.status === "refunded" ? "refund-complete" : ""}`} aria-labelledby={`receipt-${p.id}`}>
-    <div className="section-heading"><h3 id={`receipt-${p.id}`}>Receipt #{p.id}</h3><span className={`badge ${p.status === "refunded" ? "good" : mismatch ? "warning" : "good"}`}>{p.status === "refunded" ? "Refunded" : mismatch ? "Item mismatch" : "Correct item"}</span></div>
+    <div className="section-heading"><div><h3 id={`receipt-${p.id}`}>Receipt #{p.id}</h3><p className="small muted">{p.agent_name} by {p.provider_name}</p></div><span className={`badge ${p.status === "refunded" ? "good" : mismatch ? "warning" : "good"}`}>{p.status === "refunded" ? "Refunded" : mismatch ? "Item mismatch" : "Correct item"}</span></div>
+    {p.failure_injected && <p className="notice warning-text"><strong>Injected failure rehearsal</strong><span className="small">This mismatch was deliberately armed for the demo.</span></p>}
     <div className="receipt-items"><ItemEvidence item={p.asked} label="You asked for" /><ItemEvidence item={p.bought} label="Agent bought" /></div>
     {mismatch && <p className="mismatch mono">{p.asked.colour} != {p.bought.colour}</p>}
     <div className="receipt-amount"><span>Listed price</span><strong className="mono">{usd(p.listed_usd_cents ?? 0)}</strong></div>
+    <div className="receipt-amount"><span>Shipping</span><strong className="mono">{usd(p.shipping_cents)}</strong></div>
+    <div className="receipt-amount"><span>Tax</span><strong className="mono">{usd(p.tax_cents)}</strong></div>
+    <div className="receipt-amount"><span>Agent service fee</span><strong className="mono">{usd(p.service_fee_cents)}</strong></div>
+    <div className="receipt-amount"><span>Approved buyer total</span><strong className="mono">{usd(p.buyer_total_cents ?? 0)}</strong></div>
     {p.sandbox_pricing && <div className="receipt-amount"><span>Actual sandbox charge</span><strong className="mono">{usdc(p.charge_usdc ?? 0)}</strong></div>}
     {p.status === "confirmed" && mismatch && <button onClick={onClaim} disabled={claimBusy}>{claimBusy ? "Opening claim…" : "Wrong item"}</button>}
     {(claimBusy || p.status === "claimed") && <p className="claim-timer" role="status">Waiting for refund · <span className="mono">{((elapsed ?? 0) / 1000).toFixed(1)} s</span></p>}
-    {p.status === "refunded" && <div className="refund-evidence" role="status"><p className="large">Refunded from the maker’s deposit{elapsed !== null ? ` in ${(elapsed / 1000).toFixed(1)} s` : ""}</p><p className="small">{p.simulation ? "Simulated refund · measured browser time · no money moved" : "Measured from claim click to refund event"}</p>{p.refund_tx_hash && <p className="mono small wrap">Evidence: {short(p.refund_tx_hash)}</p>}</div>}
+    {p.status === "refunded" && <div className="refund-evidence" role="status"><p className="large">{usdc(p.refund_amount_usdc ?? 0)} refunded from the provider’s deposit{elapsed !== null ? ` in ${(elapsed / 1000).toFixed(1)} s` : ""}</p><p className="small">{p.simulation ? "Full approved total · simulated money · measured browser time" : "Measured from claim click to refund event"}</p><p className="small warning-text"><strong>Merchant recovery pending.</strong> The provider handles the vendor return.</p>{p.refund_tx_hash && <p className="mono small wrap">Evidence: {short(p.refund_tx_hash)}</p>}</div>}
     {p.status === "rejected" && <p>Claim rejected: purchased attributes match the request.</p>}
   </section>;
 }
